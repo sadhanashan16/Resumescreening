@@ -426,7 +426,7 @@ def build_body() -> Doc:
       "N resumes by score. Besides ranking, the engine recommends roles for a single resume by combining text similarity to each "
       "role profile (30%), weighted skill fit to the role's core and secondary skills (35%) and the classifier probability (35%), "
       "and lists the core skills the resume lacks as skills to learn.")
-    d.figure(FIG / "fig_pipeline.png", "ML Scoring Pipeline Data Flow", 92)
+    d.figure(FIG / "fig_pipeline.png", "ML Scoring Pipeline Data Flow", 80)
     sub("", "Job roles modelled")
     d.table(["Job role", "Core skills used by the generator and the role profile"],
             [[r["title"], ", ".join(r["core"])] for r in ROLES], "Job Roles Modelled and Their Core Skills", widths=[26, 74])
@@ -480,20 +480,20 @@ def build_body() -> Doc:
     p("The home page explains the five-stage pipeline and links to the two tools. In recruiter mode (Screen candidates) the "
       "user pastes a job description or loads one of the twelve example descriptions, adds resumes by drag-and-drop (or ticks the "
       "built-in sample resumes for a quick demonstration) and chooses the shortlist size.")
-    d.figure(FIG / "ui_home.png", "Home Page of ResumeIQ", 100)
-    d.figure(FIG / "ui_screen_form.png", "Screen Candidates Page with a Job Description and Resumes", 100)
+    d.figure(FIG / "ui_home.png", "Home Page of ResumeIQ", 82)
+    d.figure(FIG / "ui_screen_form.png", "Screen Candidates Page with a Job Description and Resumes", 82)
     p("The results page shows the job type detected from the description (with the classifier's confidence), the skills "
       "extracted from it and summary counts, followed by one card per candidate in rank order. Each card shows the score and "
       "grade, the predicted role, estimated experience and education, and the matched, related (partial credit) and missing "
       "skills; an expandable panel gives the per-component score bars and the separate Naive Bayes and SVM predictions. The "
       "shortlist and the full ranking can be downloaded as CSV, with spreadsheet formula characters neutralised.")
-    d.figure(FIG / "ui_screen_results.png", "Screening Results: Ranked Candidates with Skill Evidence", 100)
+    d.figure(FIG / "ui_screen_results.png", "Screening Results: Ranked Candidates with Skill Evidence", 82)
     p("In candidate mode (Find job match), a single resume, pasted text or a sample is analysed and the best-fit roles are "
       "listed with their scores, the skills already matched and the skills to learn. The Model insights page reports the "
       "dataset, the model comparison, the per-role results, the confusion matrix and the most predictive terms, and states "
       "prominently that the data are synthetic.")
-    d.figure(FIG / "ui_match_results.png", "Find Job Match: Role Recommendations for One Resume", 100)
-    d.figure(FIG / "ui_insights.png", "Model Insights Page", 100)
+    d.figure(FIG / "ui_match_results.png", "Find Job Match: Role Recommendations for One Resume", 82)
+    d.figure(FIG / "ui_insights.png", "Model Insights Page", 82)
     p("Uploaded files are read into memory, scored and discarded; nothing is written to disk or stored. File type is validated "
       "by extension and content signature, size and count are limited, error responses never expose internals, and the "
       "browser is restricted by a Content Security Policy that blocks inline scripts and styles.")
@@ -522,7 +522,7 @@ def build_body() -> Doc:
       f"accuracy ({N_CORRECT} of {M['n_test']} test resumes), with macro precision, recall and F1 of {h['ensemble']['precision']:.3f}. "
       "The only error is one Cybersecurity Analyst resume classified as a DevOps Engineer, a neighbouring role in the catalog "
       "that shares Linux, monitoring and networking skills (Figure 6.2).")
-    d.figure(FIG / "fig_confusion.png", "Confusion Matrix of the Ensemble on the Hold-out Set", 78)
+    d.figure(FIG / "fig_confusion.png", "Confusion Matrix of the Ensemble on the Hold-out Set", 62)
     d.table(["Job role", "Precision", "Recall", "F1-score", "Test resumes"],
             [[r["title"], f"{r['precision']:.3f}", f"{r['recall']:.3f}", f"{r['f1']:.3f}", str(r["support"])] for r in M["per_role"]],
             "Per-role Results of the Ensemble on the Hold-out Set", widths=[34, 16, 16, 16, 18], center_cols=(1, 2, 3, 4))
@@ -534,7 +534,7 @@ def build_body() -> Doc:
             [[str(c["rank"]), c["name"], c["predicted_role"]["title"], f"{c['score']:.1f}", c["grade"].replace(" match", ""),
               f"{c['components']['text_similarity']:.0f}", f"{c['components']['skills']:.0f}"] for c in cands],
             "Top Candidates for the Data Scientist Job (14 Sample Resumes)", widths=[8, 20, 27, 10, 12, 11, 12], center_cols=(0, 3, 4, 5, 6))
-    d.figure(FIG / "fig_ranking.png", "Live Ranking of the Sample Resumes for the Data Scientist Job", 88)
+    d.figure(FIG / "fig_ranking.png", "Live Ranking of the Sample Resumes for the Data Scientist Job", 78)
     sec("6.3", "Discussion")
     p("The most consistent observation is that the two classifiers agree: Naive Bayes and the calibrated SVM predicted the same "
       "role for every resume in the sample screening, and their one-error performance on the hold-out set is shared. This is "
@@ -597,7 +597,7 @@ def build_body() -> Doc:
       "also learned to review each other's work before every milestone, which caught several defects before they reached the "
       "demonstration.")
     sec("7.3", "Course Outcomes — Evidence Summary")
-    d.figure(FIG / "fig_outcomes.png", "Course Outcomes", 80)
+    d.figure(FIG / "fig_outcomes.png", "Course Outcomes", 62)
     ul(["Technical / ML competency: the Naive Bayes and SVM text classifiers, TF-IDF features, probability calibration and "
         "cosine-similarity scoring, evaluated with a hold-out set and cross-validation, demonstrate applied understanding of "
         "supervised text classification (Chapters 2 and 4).",
@@ -655,7 +655,7 @@ def build_body() -> Doc:
         "Render, \"Blueprint specification (render.yaml).\" [Online]. Available: https://render.com/docs/blueprint-spec (accessed 2026).",
     ]
     d.special("REFERENCES")
-    d.raw("".join(f'<p class="hang" style="margin-bottom:9pt">[{i}] {r}</p>' for i, r in enumerate(refs, 1)))
+    d.raw('<div class="refs">' + "".join(f'<p class="hang">[{i}] {r}</p>' for i, r in enumerate(refs, 1)) + "</div>")
 
     d.special("APPENDIX")
     d.raw('<h2>A.1 Full Source Code</h2>')

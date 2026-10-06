@@ -17,8 +17,8 @@ CSS = """
 @page { size: A4; margin: 36mm 25.4mm 21mm 25.4mm; }
 * { box-sizing: border-box; }
 html { font-family: 'Liberation Serif', 'Times New Roman', serif; font-size: 12pt; color: #000; }
-body { margin: 0; line-height: 1.68; text-align: justify; hyphens: manual; }
-p { margin: 0 0 9pt; orphans: 2; widows: 2; }
+body { margin: 0; line-height: 1.5; text-align: justify; hyphens: manual; }
+p { margin: 0 0 8pt; orphans: 2; widows: 2; }
 .pb { break-before: page; }
 .center { text-align: center; }
 .cover { text-align: center; line-height: 1.3; margin-top: -6mm; }
@@ -53,6 +53,7 @@ pre.code { font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace; font-s
 .box .dm { font-weight: bold; }
 .box p { margin: 0; text-indent: 0; }
 .hang { padding-left: 30pt; text-indent: -30pt; margin: 0; }
+.refs p { font-size: 10.5pt; line-height: 1.28; margin: 0 0 4.5pt !important; text-align: left; }
 .sig { display: flex; gap: 22pt; margin-top: 70pt; line-height: 1.3; text-align: left; } .sig > div { flex: 1; }
 .toc .row { display: flex; align-items: baseline; text-align: left; line-height: 1.38; }
 .toc .row .t { white-space: nowrap; } .toc .row .d { flex: 1; border-bottom: 1.4pt dotted #000; margin: 0 3pt; transform: translateY(-3pt); } .toc .row .n { min-width: 14pt; text-align: right; }
