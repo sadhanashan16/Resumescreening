@@ -1,0 +1,19 @@
+Ananya Li
+ananya.li@example.com | +91 74559 13077
+
+Summary
+Mobile App Developer focused on Figma, Appium. Develop and ship mobile apps to the Play Store and App Store.
+
+Skills
+Technologies: Figma, Appium, Git, OOP, Android, Dart, Mobile Development, Documentation, Firebase, REST APIs, Kotlin, Java, Linux
+
+Professional Experience
+Android Developer, Pioneer Telecom  Jan 2022 - Present
+- Built pixel-perfect screens from design specs and supported multiple screen sizes
+- Integrated REST APIs, Firebase push notifications and offline caching
+
+Projects
+- Automated builds and releases to the Play Store and App Store via CI/CD
+
+Education
+B.Com, Univ. of Manchester  2017 - 2021

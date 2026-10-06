@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Machine-learning powered recruitment</span>
+  <h1>Screen hundreds of resumes in <span>seconds</span>, not days</h1>
+  <p class="lead">Upload resumes, paste a job description, and get a ranked, explainable shortlist. Or upload one resume and discover which job roles fit best. Built with TF-IDF, Naive Bayes and SVM.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="{{ url_for('screen_page') }}">Screen candidates →</a>
+    <a class="btn" href="{{ url_for('match_page') }}">Find my best job match</a>
+  </div>
+</section>
+
+<section class="block">
+  <div class="stats">
+    <div class="stat"><b>{{ roles|length }}</b>job roles modelled</div>
+    <div class="stat"><b>{{ n_skills }}</b>skills recognised</div>
+    <div class="stat"><b>3</b>ML models (TF-IDF · NB · SVM)</div>
+    <div class="stat"><b>{{ metrics.n_samples if metrics else '–' }}</b>training resumes</div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step"><h3>Upload</h3><p class="muted small">PDF, DOC, DOCX or TXT resumes. Text is extracted in memory.</p></div>
+    <div class="step"><h3>Extract (NLP)</h3><p class="muted small">Skills, education, experience and contact details are pulled from the text.</p></div>
+    <div class="step"><h3>Vectorise</h3><p class="muted small">Resumes and the job description become TF-IDF vectors (unigrams + bigrams).</p></div>
+    <div class="step"><h3>Classify &amp; rank</h3><p class="muted small">Naive Bayes and SVM predict the role; cosine similarity and skill coverage rank fit.</p></div>
+    <div class="step"><h3>Shortlist</h3><p class="muted small">Top candidates with reasons: matched, related and missing skills. Export to CSV.</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>What you can do</h2>
+  <div class="grid grid-3">
+    <div class="card"><h3><span class="icon">👥</span> For recruiters</h3><p class="muted">Rank a whole batch of resumes against a job description and get a top-N shortlist with a transparent score breakdown.</p><a href="{{ url_for('screen_page') }}">Open the screener →</a></div>
+    <div class="card"><h3><span class="icon">🎯</span> For candidates</h3><p class="muted">Upload one resume and see which of {{ roles|length }} roles you match best, and which skills to learn to close the gap.</p><a href="{{ url_for('match_page') }}">Find my match →</a></div>
+    <div class="card"><h3><span class="icon">🔍</span> Explainable</h3><p class="muted">Every score shows its components: text similarity, skill coverage, role fit, experience and education.</p><a href="{{ url_for('insights_page') }}">See model insights →</a></div>
+    <div class="card"><h3><span class="icon">⚖️</span> Bias-aware</h3><p class="muted">Names, e-mails and phone numbers are stripped before scoring so they cannot influence the ranking.</p></div>
+    <div class="card"><h3><span class="icon">🔒</span> Private</h3><p class="muted">Files are processed in memory and discarded after the request. Nothing is stored on the server.</p></div>
+    <div class="card"><h3><span class="icon">⚡</span> Fast</h3><p class="muted">Batch up to 30 resumes per run. Try it instantly with the built-in sample resumes ({{ n_samples }} included).</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Tech stack</h2>
+  <div class="chips">
+    {% for t in ['Python', 'Flask', 'Scikit-learn', 'TF-IDF', 'Naive Bayes', 'Linear SVM', 'Pandas', 'NumPy', 'pypdf', 'python-docx', 'Gunicorn', 'Docker', 'Render'] %}<span class="chip tech">{{ t }}</span>{% endfor %}
+  </div>
+</section>
+{% endblock %}

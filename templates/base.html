@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ResumeIQ{% endblock %} · AI Resume Screening</title>
+  <meta name="description" content="AI-powered resume screening and job matching using TF-IDF, Naive Bayes and SVM.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">R</span> ResumeIQ</a>
+    <nav class="nav-links" aria-label="Main">
+      {% set ep = request.endpoint %}
+      <a href="{{ url_for('index') }}" {% if ep == 'index' %}aria-current="page"{% endif %}>Home</a>
+      <a href="{{ url_for('screen_page') }}" {% if ep == 'screen_page' %}aria-current="page"{% endif %}>Screen candidates</a>
+      <a href="{{ url_for('match_page') }}" {% if ep == 'match_page' %}aria-current="page"{% endif %}>Find job match</a>
+      <a href="{{ url_for('insights_page') }}" {% if ep == 'insights_page' %}aria-current="page"{% endif %}>Model insights</a>
+    </nav>
+  </div>
+</header>
+<main class="container">{% block content %}{% endblock %}</main>
+<footer>
+  <div class="container">
+    <p><strong>ResumeIQ</strong> supports, not replaces, human judgement: scores are decision aids and every shortlist should be reviewed by a person.
+    Names and contact details are removed before scoring. Uploaded files are processed in memory and are never stored.</p>
+  </div>
+</footer>
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

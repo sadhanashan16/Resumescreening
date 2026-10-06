@@ -1,0 +1,23 @@
+Ingrid Rossi
+ingrid.rossi46@example.com | +1 (338) 362-2599
+
+Summary
+Analytics Engineer with 1+ years of experience in Data Visualization, Teamwork, SQL. Builds and maintains reliable data pipelines, warehouses and platforms that make data available for analytics and ML.
+
+Skills
+Technologies: Data Visualization, Teamwork, SQL, Kafka, AWS, Python
+
+Work Experience
+Analytics Engineer, Apex Financial  May 2024 - Present
+- Collaborated with data scientists to ship reliable feature tables and reporting marts
+- Implemented data quality monitoring and lineage tracking across 20 critical datasets
+
+Projects
+- Worked closely with stakeholders to understand requirements and prioritise work
+- Delivered 24 projects on time while maintaining high quality standards
+
+Education
+B.E. in Data Engineering, Pune University  2020 - 2024
+
+Certifications
+- Databricks Certified Data Engineer Associate

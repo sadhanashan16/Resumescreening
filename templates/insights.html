@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Model insights{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Model insights</h1>
+  <p>How the classifiers were trained and how they perform, plus how the match score is built.</p>
+</div>
+{% if not metrics %}
+  <div class="alert warn">Model metrics are not available yet. Run <code>python -m resume_screening.train</code>.</div>
+{% else %}
+<div class="alert warn"><strong>Read these numbers with care.</strong> Data source: <em>{{ metrics.data_source }}</em>. Synthetic resumes are far more regular than real ones, so near-perfect scores here
+  <strong>are not a real-world accuracy estimate</strong>. For production use, retrain on your own labelled resumes (<code>python -m resume_screening.train --csv your.csv</code>).</div>
+
+<section class="block">
+  <div class="stats">
+    <div class="stat"><b>{{ metrics.n_samples }}</b>resumes ({{ metrics.n_train }} train / {{ metrics.n_test }} test)</div>
+    <div class="stat"><b>{{ metrics.n_roles }}</b>job roles</div>
+    <div class="stat"><b>{{ '{:,}'.format(metrics.n_features) }}</b>TF-IDF features</div>
+    <div class="stat"><b>{{ (metrics.holdout.ensemble.accuracy * 100)|round(1) }}%</b>ensemble hold-out accuracy</div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Model comparison</h2>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>Model</th><th class="num">Hold-out accuracy</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">F1 (macro)</th><th class="num">5-fold CV accuracy</th></tr></thead>
+      <tbody>
+      {% for key, label in [('naive_bayes', 'Multinomial Naive Bayes'), ('svm', 'Linear SVM (calibrated)'), ('ensemble', 'Ensemble (average of both) - used in the app')] %}
+        {% set h = metrics.holdout[key] %}
+        <tr><td>{{ label }}</td><td class="num">{{ '%.3f'|format(h.accuracy) }}</td><td class="num">{{ '%.3f'|format(h.precision) }}</td><td class="num">{{ '%.3f'|format(h.recall) }}</td><td class="num">{{ '%.3f'|format(h.f1) }}</td>
+          <td class="num">{% if key in metrics.cross_validation %}{{ '%.3f'|format(metrics.cross_validation[key].accuracy) }}{% else %}–{% endif %}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small">Trained {{ metrics.trained_at }} in {{ metrics.train_seconds }}s. Hold-out = 20% stratified test split never seen in training. Cross-validation refits the TF-IDF vectoriser inside every fold to avoid leakage.</p>
+</section>
+
+<section class="block">
+  <h2>How the match score is built</h2>
+  <div class="grid grid-3">
+    <div class="card"><h3>40% · Text similarity</h3><p class="muted small">Cosine similarity between the TF-IDF vectors of the resume and the job description (skills are canonicalised, so “sklearn” = “scikit-learn”).</p></div>
+    <div class="card"><h3>30% · Skill coverage</h3><p class="muted small">Share of the job's required skills found in the resume. Related skills (e.g. MySQL for PostgreSQL) earn half credit.</p></div>
+    <div class="card"><h3>15% · Role fit</h3><p class="muted small">Agreement between the role predicted for the resume and for the job description (Naive Bayes + SVM), with partial credit for neighbouring roles.</p></div>
+    <div class="card"><h3>10% · Experience</h3><p class="muted small">Estimated years (from date ranges and stated experience) versus the years the job asks for.</p></div>
+    <div class="card"><h3>5% · Education</h3><p class="muted small">Highest degree detected versus the level the job requires.</p></div>
+    <div class="card"><h3>Auto re-weighting</h3><p class="muted small">If the job description states no experience or education requirement, that component is dropped and the other weights are re-normalised.</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Per-role performance (ensemble, hold-out)</h2>
+  <div class="card" id="per-role"></div>
+</section>
+<section class="block">
+  <h2>Confusion matrix</h2>
+  <div class="card table-wrap"><table class="cm" id="cm"></table></div>
+  <p class="muted small">Rows = true role, columns = predicted role. Darker = more resumes.</p>
+</section>
+<section class="block">
+  <h2>Most predictive terms per role</h2>
+  <div class="grid grid-2" id="features"></div>
+</section>
+<script id="metrics-data" type="application/json">{{ metrics|tojson }}</script>
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if metrics %}<script src="{{ url_for('static', filename='js/insights.js') }}"></script>{% endif %}{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Find job match{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Find your best job match</h1>
+  <p>Upload a single resume to see which job roles it fits best, how the Naive Bayes and SVM models classify it, and which skills would close the gap.</p>
+</div>
+<form id="match-form" novalidate>
+  <div class="form-grid">
+    <div class="card">
+      <h3>Upload a resume</h3>
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Choose a resume file">
+        <div class="big">📄</div><strong>Drop a resume here</strong> or click to browse
+        <div class="muted small">PDF, DOC, DOCX, TXT · {{ max_mb }} MB max</div>
+        <input type="file" id="file" class="sr-only" accept=".pdf,.doc,.docx,.txt" tabindex="-1">
+      </div>
+      <ul class="file-list" id="file-list"></ul>
+      <p class="muted small">…or paste the resume text, or try a sample:</p>
+      <select id="sample"><option value="">Choose a sample resume…</option></select>
+    </div>
+    <div class="card">
+      <h3>Or paste resume text</h3>
+      <textarea id="resume_text" placeholder="Paste your resume text here…"></textarea>
+      <button type="submit" class="btn btn-primary w-full mt-12" id="submit-btn">Find matching roles</button>
+      <div id="form-error" class="alert error" role="alert" hidden></div>
+    </div>
+  </div>
+</form>
+<section class="results" id="results" aria-live="polite" hidden></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/match.js') }}"></script>{% endblock %}

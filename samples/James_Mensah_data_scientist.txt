@@ -1,0 +1,21 @@
+James Mensah
+james.mensah@example.com | +44 7190 589747
+
+Summary
+Data Scientist focused on Tableau, Python. Build, validate and deploy predictive models.
+
+Technical Skills
+Technologies: Tableau, Python, TensorFlow, Documentation, Gradient Boosting, PyTorch, Machine Learning, Pandas, Statistics, Scikit-learn, Feature Engineering
+
+Experience
+Data Scientist, CodeCraft  Apr 2022 - Apr 2025
+- Engineered 14+ features and tuned models with cross-validation, lifting AUC from 0.77 to 0.81
+- Trained and deployed Pandas models serving 40K+ requests per day with p95 latency under 29ms
+- Automated reporting notebooks using Scikit-learn, saving the team 60 hours per week
+
+Education
+B.Sc in Mathematics, BITS Pilani  2017 - 2021
+
+Certifications
+- IBM Data Science Professional Certificate
+- Google Data Analytics Certificate
