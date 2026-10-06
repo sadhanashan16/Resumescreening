@@ -1,0 +1,1483 @@
+{
+ "job": {
+  "title": "Data Scientist",
+  "skills": [
+   "Statistics",
+   "Machine Learning",
+   "Data Analysis",
+   "Feature Engineering",
+   "Python",
+   "Scikit-learn",
+   "Pandas",
+   "SQL",
+   "Deep Learning",
+   "NumPy",
+   "Data Visualization",
+   "Jupyter",
+   "TensorFlow"
+  ],
+  "min_years": 2,
+  "education_level": 3,
+  "predicted_role": {
+   "id": "data-scientist",
+   "title": "Data Scientist",
+   "confidence": 0.99
+  }
+ },
+ "shortlist_size": 5,
+ "candidates": [
+  {
+   "filename": "David_Sato_data_scientist.pdf",
+   "name": "David Sato",
+   "email": "david.sato@example.com",
+   "phone": "+44 7876 340822",
+   "experience_years": 3.0,
+   "education": {
+    "level": 4,
+    "label": "Master's",
+    "detail": "M.Sc in Mathematics, BITS Pilani 2022 - 2024"
+   },
+   "skills": [
+    "Statistics",
+    "Feature Engineering",
+    "Jupyter",
+    "Machine Learning",
+    "Gradient Boosting",
+    "Pandas",
+    "NumPy",
+    "Linux",
+    "Agile",
+    "SQL",
+    "Communication",
+    "Leadership",
+    "Data Analysis",
+    "Business Intelligence"
+   ],
+   "word_count": 176,
+   "text_similarity": 0.242,
+   "predicted_role": {
+    "title": "Data Scientist",
+    "confidence": 0.992
+   },
+   "naive_bayes_role": "Data Scientist",
+   "svm_role": "Data Scientist",
+   "top_roles": [
+    {
+     "title": "Data Scientist",
+     "probability": 0.992
+    },
+    {
+     "title": "Mobile App Developer",
+     "probability": 0.001
+    },
+    {
+     "title": "Business Analyst",
+     "probability": 0.001
+    }
+   ],
+   "score": 72.0,
+   "grade": "Strong match",
+   "components": {
+    "text_similarity": 53.8,
+    "skills": 69.2,
+    "role_fit": 98.3,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Pandas",
+    "SQL",
+    "NumPy",
+    "Jupyter"
+   ],
+   "related_skills": [
+    {
+     "required": "Python",
+     "has": "NumPy"
+    },
+    {
+     "required": "Scikit-learn",
+     "has": "Feature Engineering"
+    }
+   ],
+   "missing_skills": [
+    "Deep Learning",
+    "Data Visualization",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Gradient Boosting",
+    "Linux",
+    "Agile",
+    "Business Intelligence"
+   ],
+   "rank": 1,
+   "shortlisted": true
+  },
+  {
+   "filename": "James_Mensah_data_scientist.txt",
+   "name": "James Mensah",
+   "email": "james.mensah@example.com",
+   "phone": "+44 7190 589747",
+   "experience_years": 3.0,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.Sc in Mathematics, BITS Pilani 2017 - 2021"
+   },
+   "skills": [
+    "Tableau",
+    "Python",
+    "Machine Learning",
+    "TensorFlow",
+    "Documentation",
+    "Gradient Boosting",
+    "PyTorch",
+    "Pandas",
+    "Statistics",
+    "Scikit-learn",
+    "Feature Engineering",
+    "Business Intelligence",
+    "Data Analysis"
+   ],
+   "word_count": 111,
+   "text_similarity": 0.214,
+   "predicted_role": {
+    "title": "Data Scientist",
+    "confidence": 0.992
+   },
+   "naive_bayes_role": "Data Scientist",
+   "svm_role": "Data Scientist",
+   "top_roles": [
+    {
+     "title": "Data Scientist",
+     "probability": 0.992
+    },
+    {
+     "title": "Data Analyst",
+     "probability": 0.001
+    },
+    {
+     "title": "QA Engineer",
+     "probability": 0.001
+    }
+   ],
+   "score": 70.7,
+   "grade": "Strong match",
+   "components": {
+    "text_similarity": 47.5,
+    "skills": 73.1,
+    "role_fit": 98.3,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Python",
+    "Scikit-learn",
+    "Pandas",
+    "TensorFlow"
+   ],
+   "related_skills": [
+    {
+     "required": "Deep Learning",
+     "has": "PyTorch"
+    },
+    {
+     "required": "NumPy",
+     "has": "Pandas"
+    },
+    {
+     "required": "Data Visualization",
+     "has": "Tableau"
+    }
+   ],
+   "missing_skills": [
+    "SQL",
+    "Jupyter"
+   ],
+   "extra_skills": [
+    "Tableau",
+    "Documentation",
+    "Gradient Boosting",
+    "PyTorch",
+    "Business Intelligence"
+   ],
+   "rank": 2,
+   "shortlisted": true
+  },
+  {
+   "filename": "Isabella_Nair_data_analyst.pdf",
+   "name": "Isabella Nair",
+   "email": "isabella.nair78@example.com",
+   "phone": "+1 (810) 894-6536",
+   "experience_years": 6.8,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "Bachelor of Engineering in Statistics, Arizona State University 2016 - 2020"
+   },
+   "skills": [
+    "Gap Analysis",
+    "Machine Learning",
+    "Pandas",
+    "Data Visualization",
+    "Python",
+    "SQL",
+    "Teamwork",
+    "Stakeholder Management",
+    "Git",
+    "Statistics",
+    "Linux",
+    "Communication",
+    "Documentation",
+    "Data Warehousing",
+    "Requirements Gathering",
+    "Product Analytics",
+    "Agile",
+    "Power BI",
+    "Tableau"
+   ],
+   "word_count": 154,
+   "text_similarity": 0.081,
+   "predicted_role": {
+    "title": "Data Analyst",
+    "confidence": 0.988
+   },
+   "naive_bayes_role": "Data Analyst",
+   "svm_role": "Data Analyst",
+   "top_roles": [
+    {
+     "title": "Data Analyst",
+     "probability": 0.988
+    },
+    {
+     "title": "Business Analyst",
+     "probability": 0.004
+    },
+    {
+     "title": "Data Scientist",
+     "probability": 0.003
+    }
+   ],
+   "score": 46.6,
+   "grade": "Partial match",
+   "components": {
+    "text_similarity": 18.0,
+    "skills": 61.5,
+    "role_fit": 39.5,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Python",
+    "Pandas",
+    "SQL",
+    "Data Visualization"
+   ],
+   "related_skills": [
+    {
+     "required": "Data Analysis",
+     "has": "Product Analytics"
+    },
+    {
+     "required": "Feature Engineering",
+     "has": "Machine Learning"
+    },
+    {
+     "required": "Scikit-learn",
+     "has": "Machine Learning"
+    },
+    {
+     "required": "NumPy",
+     "has": "Pandas"
+    }
+   ],
+   "missing_skills": [
+    "Deep Learning",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Gap Analysis",
+    "Stakeholder Management",
+    "Git",
+    "Linux",
+    "Documentation",
+    "Data Warehousing",
+    "Requirements Gathering",
+    "Product Analytics",
+    "Agile",
+    "Power BI",
+    "Tableau"
+   ],
+   "rank": 3,
+   "shortlisted": true
+  },
+  {
+   "filename": "Sneha_Mehta_machine_learning_engineer.docx",
+   "name": "Sneha Mehta",
+   "email": "sneha.mehta@example.com",
+   "phone": "+1 (786) 487-6419",
+   "experience_years": 12.0,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "BCA, Arizona State University 2009 - 2013"
+   },
+   "skills": [
+    "Docker",
+    "Python",
+    "PyTorch",
+    "Machine Learning",
+    "Apache Spark",
+    "MLOps",
+    "Deep Learning",
+    "Scikit-learn",
+    "Kubernetes",
+    "Documentation",
+    "Data Structures & Algorithms",
+    "CI/CD",
+    "Linux",
+    "Keras",
+    "TensorFlow",
+    "NLP",
+    "Leadership",
+    "AWS"
+   ],
+   "word_count": 129,
+   "text_similarity": 0.04,
+   "predicted_role": {
+    "title": "Machine Learning Engineer",
+    "confidence": 0.986
+   },
+   "naive_bayes_role": "Machine Learning Engineer",
+   "svm_role": "Machine Learning Engineer",
+   "top_roles": [
+    {
+     "title": "Machine Learning Engineer",
+     "probability": 0.986
+    },
+    {
+     "title": "Data Scientist",
+     "probability": 0.004
+    },
+    {
+     "title": "DevOps Engineer",
+     "probability": 0.002
+    }
+   ],
+   "score": 40.7,
+   "grade": "Partial match",
+   "components": {
+    "text_similarity": 9.0,
+    "skills": 53.8,
+    "role_fit": 39.5,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "Machine Learning",
+    "Python",
+    "Scikit-learn",
+    "Deep Learning",
+    "TensorFlow"
+   ],
+   "related_skills": [
+    {
+     "required": "Statistics",
+     "has": "Machine Learning"
+    },
+    {
+     "required": "Feature Engineering",
+     "has": "Machine Learning"
+    },
+    {
+     "required": "Pandas",
+     "has": "Python"
+    },
+    {
+     "required": "NumPy",
+     "has": "Python"
+    }
+   ],
+   "missing_skills": [
+    "Data Analysis",
+    "SQL",
+    "Data Visualization",
+    "Jupyter"
+   ],
+   "extra_skills": [
+    "Docker",
+    "PyTorch",
+    "Apache Spark",
+    "MLOps",
+    "Kubernetes",
+    "Documentation",
+    "Data Structures & Algorithms",
+    "CI/CD",
+    "Linux",
+    "Keras",
+    "NLP",
+    "AWS"
+   ],
+   "rank": 4,
+   "shortlisted": true
+  },
+  {
+   "filename": "Ingrid_Rossi_data_engineer.txt",
+   "name": "Ingrid Rossi",
+   "email": "ingrid.rossi46@example.com",
+   "phone": "+1 (338) 362-2599",
+   "experience_years": 2.4,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.E. in Data Engineering, Pune University 2020 - 2024"
+   },
+   "skills": [
+    "Data Visualization",
+    "Teamwork",
+    "SQL",
+    "ETL",
+    "Machine Learning",
+    "Kafka",
+    "AWS",
+    "Python",
+    "Business Intelligence",
+    "Monitoring",
+    "Databricks"
+   ],
+   "word_count": 121,
+   "text_similarity": 0.048,
+   "predicted_role": {
+    "title": "Data Engineer",
+    "confidence": 0.989
+   },
+   "naive_bayes_role": "Data Engineer",
+   "svm_role": "Data Engineer",
+   "top_roles": [
+    {
+     "title": "Data Engineer",
+     "probability": 0.989
+    },
+    {
+     "title": "Machine Learning Engineer",
+     "probability": 0.002
+    },
+    {
+     "title": "Cybersecurity Analyst",
+     "probability": 0.002
+    }
+   ],
+   "score": 35.5,
+   "grade": "Partial match",
+   "components": {
+    "text_similarity": 10.7,
+    "skills": 53.8,
+    "role_fit": 0.4,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "Machine Learning",
+    "Python",
+    "SQL",
+    "Data Visualization"
+   ],
+   "related_skills": [
+    {
+     "required": "Statistics",
+     "has": "Machine Learning"
+    },
+    {
+     "required": "Data Analysis",
+     "has": "Business Intelligence"
+    },
+    {
+     "required": "Feature Engineering",
+     "has": "Machine Learning"
+    },
+    {
+     "required": "Scikit-learn",
+     "has": "Machine Learning"
+    },
+    {
+     "required": "Pandas",
+     "has": "Python"
+    },
+    {
+     "required": "NumPy",
+     "has": "Python"
+    }
+   ],
+   "missing_skills": [
+    "Deep Learning",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "ETL",
+    "Kafka",
+    "AWS",
+    "Business Intelligence",
+    "Monitoring",
+    "Databricks"
+   ],
+   "rank": 5,
+   "shortlisted": true
+  },
+  {
+   "filename": "Lina_Muller_full_stack_developer.docx",
+   "name": "Lina Muller",
+   "email": "lina.muller@example.com",
+   "phone": "+91 85106 55976",
+   "experience_years": 11.6,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.Com, University of Melbourne 2010 - 2014"
+   },
+   "skills": [
+    "JavaScript",
+    "Agile",
+    "MongoDB",
+    "REST APIs",
+    "React",
+    "SQL",
+    "Angular",
+    "PostgreSQL",
+    "CSS",
+    "Node.js",
+    "Git",
+    "Problem Solving",
+    "Teamwork",
+    "Express",
+    "Django",
+    "Python",
+    "CI/CD",
+    "MySQL",
+    "HTML",
+    "Communication",
+    "Web Accessibility",
+    "AWS"
+   ],
+   "word_count": 189,
+   "text_similarity": 0.012,
+   "predicted_role": {
+    "title": "Full Stack Developer",
+    "confidence": 0.99
+   },
+   "naive_bayes_role": "Full Stack Developer",
+   "svm_role": "Full Stack Developer",
+   "top_roles": [
+    {
+     "title": "Full Stack Developer",
+     "probability": 0.99
+    },
+    {
+     "title": "Frontend Developer",
+     "probability": 0.004
+    },
+    {
+     "title": "Mobile App Developer",
+     "probability": 0.001
+    }
+   ],
+   "score": 23.1,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 2.7,
+    "skills": 23.1,
+    "role_fit": 0.4,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "Python",
+    "SQL"
+   ],
+   "related_skills": [
+    {
+     "required": "Pandas",
+     "has": "Python"
+    },
+    {
+     "required": "NumPy",
+     "has": "Python"
+    }
+   ],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Scikit-learn",
+    "Deep Learning",
+    "Data Visualization",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "JavaScript",
+    "Agile",
+    "MongoDB",
+    "REST APIs",
+    "React",
+    "Angular",
+    "PostgreSQL",
+    "CSS",
+    "Node.js",
+    "Git",
+    "Express",
+    "Django"
+   ],
+   "rank": 6,
+   "shortlisted": false
+  },
+  {
+   "filename": "Kwame_Patel_business_analyst.docx",
+   "name": "Kwame Patel",
+   "email": "kwame.patel@example.com",
+   "phone": "+91 78024 88872",
+   "experience_years": 9.5,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.Sc in Economics, Arizona State University 2013 - 2017"
+   },
+   "skills": [
+    "Documentation",
+    "Tableau",
+    "Excel",
+    "Gap Analysis",
+    "Business Intelligence",
+    "Git",
+    "Requirements Gathering",
+    "Process Modeling",
+    "SQL",
+    "Agile"
+   ],
+   "word_count": 118,
+   "text_similarity": 0.012,
+   "predicted_role": {
+    "title": "Business Analyst",
+    "confidence": 0.98
+   },
+   "naive_bayes_role": "Business Analyst",
+   "svm_role": "Business Analyst",
+   "top_roles": [
+    {
+     "title": "Business Analyst",
+     "probability": 0.98
+    },
+    {
+     "title": "Data Analyst",
+     "probability": 0.009
+    },
+    {
+     "title": "Machine Learning Engineer",
+     "probability": 0.002
+    }
+   ],
+   "score": 20.8,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 2.8,
+    "skills": 15.4,
+    "role_fit": 0.6,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "SQL"
+   ],
+   "related_skills": [
+    {
+     "required": "Data Analysis",
+     "has": "Business Intelligence"
+    },
+    {
+     "required": "Data Visualization",
+     "has": "Tableau"
+    }
+   ],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Feature Engineering",
+    "Python",
+    "Scikit-learn",
+    "Pandas",
+    "Deep Learning",
+    "NumPy",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Documentation",
+    "Tableau",
+    "Excel",
+    "Gap Analysis",
+    "Business Intelligence",
+    "Git",
+    "Requirements Gathering",
+    "Process Modeling",
+    "Agile"
+   ],
+   "rank": 7,
+   "shortlisted": false
+  },
+  {
+   "filename": "Aiko_Lewis_frontend_developer.docx",
+   "name": "Aiko Lewis",
+   "email": "aiko.lewis@example.com",
+   "phone": "+44 7699 527374",
+   "experience_years": 2.3,
+   "education": {
+    "level": 4,
+    "label": "Master's",
+    "detail": "M.Sc in Computer Science, Pune University 2024 - 2026"
+   },
+   "skills": [
+    "Figma",
+    "Git",
+    "Responsive Design",
+    "CSS",
+    "Next.js",
+    "JavaScript",
+    "GraphQL",
+    "React",
+    "Angular",
+    "Node.js",
+    "REST APIs"
+   ],
+   "word_count": 122,
+   "text_similarity": 0.018,
+   "predicted_role": {
+    "title": "Frontend Developer",
+    "confidence": 0.991
+   },
+   "naive_bayes_role": "Frontend Developer",
+   "svm_role": "Frontend Developer",
+   "top_roles": [
+    {
+     "title": "Frontend Developer",
+     "probability": 0.991
+    },
+    {
+     "title": "Cybersecurity Analyst",
+     "probability": 0.001
+    },
+    {
+     "title": "Data Scientist",
+     "probability": 0.001
+    }
+   ],
+   "score": 16.6,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 3.9,
+    "skills": 0.0,
+    "role_fit": 0.4,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [],
+   "related_skills": [],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Python",
+    "Scikit-learn",
+    "Pandas",
+    "SQL",
+    "Deep Learning",
+    "NumPy",
+    "Data Visualization",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Figma",
+    "Git",
+    "Responsive Design",
+    "CSS",
+    "Next.js",
+    "JavaScript",
+    "GraphQL",
+    "React",
+    "Angular",
+    "Node.js",
+    "REST APIs"
+   ],
+   "rank": 8,
+   "shortlisted": false
+  },
+  {
+   "filename": "Amara_Clark_frontend_developer.pdf",
+   "name": "Amara Clark",
+   "email": "amara.clark@example.com",
+   "phone": "+91 73356 25883",
+   "experience_years": 2.2,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.Tech in Web Design, Anna University 2020 - 2024"
+   },
+   "skills": [
+    "GraphQL",
+    "Responsive Design",
+    "Git",
+    "REST APIs",
+    "TypeScript",
+    "HTML",
+    "Android",
+    "Jest",
+    "Communication",
+    "CSS",
+    "Agile",
+    "Web Accessibility",
+    "Authentication"
+   ],
+   "word_count": 127,
+   "text_similarity": 0.01,
+   "predicted_role": {
+    "title": "Frontend Developer",
+    "confidence": 0.97
+   },
+   "naive_bayes_role": "Frontend Developer",
+   "svm_role": "Frontend Developer",
+   "top_roles": [
+    {
+     "title": "Frontend Developer",
+     "probability": 0.97
+    },
+    {
+     "title": "Full Stack Developer",
+     "probability": 0.021
+    },
+    {
+     "title": "Mobile App Developer",
+     "probability": 0.002
+    }
+   ],
+   "score": 15.9,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 2.2,
+    "skills": 0.0,
+    "role_fit": 0.3,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [],
+   "related_skills": [],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Python",
+    "Scikit-learn",
+    "Pandas",
+    "SQL",
+    "Deep Learning",
+    "NumPy",
+    "Data Visualization",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "GraphQL",
+    "Responsive Design",
+    "Git",
+    "REST APIs",
+    "TypeScript",
+    "HTML",
+    "Android",
+    "Jest",
+    "CSS",
+    "Agile",
+    "Web Accessibility",
+    "Authentication"
+   ],
+   "rank": 9,
+   "shortlisted": false
+  },
+  {
+   "filename": "Chen_Lewis_devops_engineer.pdf",
+   "name": "Chen Lewis",
+   "email": "chen.lewis54@example.com",
+   "phone": "+44 7408 957106",
+   "experience_years": 5.0,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.Sc in Computer Science, University of Melbourne 2015 - 2019"
+   },
+   "skills": [
+    "Git",
+    "GitHub Actions",
+    "Docker",
+    "GitLab CI",
+    "Kubernetes",
+    "CI/CD"
+   ],
+   "word_count": 155,
+   "text_similarity": 0.01,
+   "predicted_role": {
+    "title": "DevOps Engineer",
+    "confidence": 0.989
+   },
+   "naive_bayes_role": "DevOps Engineer",
+   "svm_role": "DevOps Engineer",
+   "top_roles": [
+    {
+     "title": "DevOps Engineer",
+     "probability": 0.989
+    },
+    {
+     "title": "Machine Learning Engineer",
+     "probability": 0.002
+    },
+    {
+     "title": "Mobile App Developer",
+     "probability": 0.001
+    }
+   ],
+   "score": 15.9,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 2.1,
+    "skills": 0.0,
+    "role_fit": 0.3,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [],
+   "related_skills": [],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Python",
+    "Scikit-learn",
+    "Pandas",
+    "SQL",
+    "Deep Learning",
+    "NumPy",
+    "Data Visualization",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Git",
+    "GitHub Actions",
+    "Docker",
+    "GitLab CI",
+    "Kubernetes",
+    "CI/CD"
+   ],
+   "rank": 10,
+   "shortlisted": false
+  },
+  {
+   "filename": "Samuel_Novak_cybersecurity_analyst.pdf",
+   "name": "Samuel Novak",
+   "email": "samuel.novak55@example.com",
+   "phone": "+1 (641) 662-3643",
+   "experience_years": 1.0,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.Sc in Information Technology, Anna University 2020 - 2024"
+   },
+   "skills": [
+    "Linux",
+    "Incident Response",
+    "Python",
+    "Monitoring",
+    "Documentation",
+    "Wireshark",
+    "SIEM",
+    "Network Security",
+    "Problem Solving",
+    "Compliance"
+   ],
+   "word_count": 149,
+   "text_similarity": 0.013,
+   "predicted_role": {
+    "title": "Cybersecurity Analyst",
+    "confidence": 0.984
+   },
+   "naive_bayes_role": "Cybersecurity Analyst",
+   "svm_role": "Cybersecurity Analyst",
+   "top_roles": [
+    {
+     "title": "Cybersecurity Analyst",
+     "probability": 0.984
+    },
+    {
+     "title": "DevOps Engineer",
+     "probability": 0.008
+    },
+    {
+     "title": "Data Engineer",
+     "probability": 0.001
+    }
+   ],
+   "score": 15.8,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 2.8,
+    "skills": 15.4,
+    "role_fit": 0.4,
+    "experience": 50.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "Python"
+   ],
+   "related_skills": [
+    {
+     "required": "Pandas",
+     "has": "Python"
+    },
+    {
+     "required": "NumPy",
+     "has": "Python"
+    }
+   ],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Scikit-learn",
+    "SQL",
+    "Deep Learning",
+    "Data Visualization",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Linux",
+    "Incident Response",
+    "Monitoring",
+    "Documentation",
+    "Wireshark",
+    "SIEM",
+    "Network Security",
+    "Compliance"
+   ],
+   "rank": 11,
+   "shortlisted": false
+  },
+  {
+   "filename": "Ananya_Li_mobile_app_developer.txt",
+   "name": "Ananya Li",
+   "email": "ananya.li@example.com",
+   "phone": "+91 74559 13077",
+   "experience_years": 4.8,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.Com, Univ. of Manchester 2017 - 2021"
+   },
+   "skills": [
+    "Mobile Development",
+    "Figma",
+    "Appium",
+    "Git",
+    "OOP",
+    "Android",
+    "Dart",
+    "Documentation",
+    "Firebase",
+    "REST APIs",
+    "Kotlin",
+    "Java",
+    "Linux",
+    "Caching",
+    "CI/CD"
+   ],
+   "word_count": 99,
+   "text_similarity": 0.006,
+   "predicted_role": {
+    "title": "Mobile App Developer",
+    "confidence": 0.99
+   },
+   "naive_bayes_role": "Mobile App Developer",
+   "svm_role": "Mobile App Developer",
+   "top_roles": [
+    {
+     "title": "Mobile App Developer",
+     "probability": 0.99
+    },
+    {
+     "title": "Cybersecurity Analyst",
+     "probability": 0.001
+    },
+    {
+     "title": "Data Analyst",
+     "probability": 0.001
+    }
+   ],
+   "score": 15.6,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 1.3,
+    "skills": 0.0,
+    "role_fit": 0.4,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [],
+   "related_skills": [],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Python",
+    "Scikit-learn",
+    "Pandas",
+    "SQL",
+    "Deep Learning",
+    "NumPy",
+    "Data Visualization",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Mobile Development",
+    "Figma",
+    "Appium",
+    "Git",
+    "OOP",
+    "Android",
+    "Dart",
+    "Documentation",
+    "Firebase",
+    "REST APIs",
+    "Kotlin",
+    "Java"
+   ],
+   "rank": 12,
+   "shortlisted": false
+  },
+  {
+   "filename": "Lina_Reddy_qa_engineer.doc",
+   "name": "Lina Reddy",
+   "email": "lina.reddy@example.com",
+   "phone": "+44 7344 222777",
+   "experience_years": 4.0,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "Bachelor of Engineering in Computer Applications, NIT Trichy 2017 - 2021"
+   },
+   "skills": [
+    "Postman",
+    "Java",
+    "Test Automation",
+    "Manual Testing",
+    "TDD",
+    "Performance Testing",
+    "Git",
+    "CI/CD",
+    "Selenium",
+    "Agile",
+    "Teamwork",
+    "Jira",
+    "Leadership",
+    "Authentication"
+   ],
+   "word_count": 174,
+   "text_similarity": 0.005,
+   "predicted_role": {
+    "title": "QA Engineer",
+    "confidence": 0.99
+   },
+   "naive_bayes_role": "QA Engineer",
+   "svm_role": "QA Engineer",
+   "top_roles": [
+    {
+     "title": "QA Engineer",
+     "probability": 0.99
+    },
+    {
+     "title": "Backend Developer",
+     "probability": 0.002
+    },
+    {
+     "title": "Data Engineer",
+     "probability": 0.001
+    }
+   ],
+   "score": 15.5,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 1.1,
+    "skills": 0.0,
+    "role_fit": 0.3,
+    "experience": 100.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [],
+   "related_skills": [],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Python",
+    "Scikit-learn",
+    "Pandas",
+    "SQL",
+    "Deep Learning",
+    "NumPy",
+    "Data Visualization",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Postman",
+    "Java",
+    "Test Automation",
+    "Manual Testing",
+    "TDD",
+    "Performance Testing",
+    "Git",
+    "CI/CD",
+    "Selenium",
+    "Agile",
+    "Jira",
+    "Authentication"
+   ],
+   "rank": 13,
+   "shortlisted": false
+  },
+  {
+   "filename": "Tomas_Tanaka_backend_developer.docx",
+   "name": "Tomas Tanaka",
+   "email": "tomas.tanaka@example.com",
+   "phone": "+1 (418) 967-2561",
+   "experience_years": 0.2,
+   "education": {
+    "level": 3,
+    "label": "Bachelor's",
+    "detail": "B.E. in Information Technology, TU Munich 2020 - 2024"
+   },
+   "skills": [
+    "Spring Boot",
+    "Database Design",
+    "Documentation",
+    "SQL",
+    "Redis",
+    "Microservices",
+    "MySQL",
+    "System Design",
+    "Jenkins",
+    "Python",
+    "Django",
+    "Agile",
+    "OOP",
+    "Git",
+    "FastAPI",
+    "Communication",
+    "Message Queues",
+    "REST APIs",
+    "AWS"
+   ],
+   "word_count": 106,
+   "text_similarity": 0.011,
+   "predicted_role": {
+    "title": "Backend Developer",
+    "confidence": 0.986
+   },
+   "naive_bayes_role": "Backend Developer",
+   "svm_role": "Backend Developer",
+   "top_roles": [
+    {
+     "title": "Backend Developer",
+     "probability": 0.986
+    },
+    {
+     "title": "Machine Learning Engineer",
+     "probability": 0.003
+    },
+    {
+     "title": "Cybersecurity Analyst",
+     "probability": 0.002
+    }
+   ],
+   "score": 14.0,
+   "grade": "Weak match",
+   "components": {
+    "text_similarity": 2.5,
+    "skills": 23.1,
+    "role_fit": 0.5,
+    "experience": 10.0,
+    "education": 100.0
+   },
+   "weights_used": {
+    "text_similarity": 0.4,
+    "skills": 0.3,
+    "role_fit": 0.15,
+    "experience": 0.1,
+    "education": 0.05
+   },
+   "matched_skills": [
+    "Python",
+    "SQL"
+   ],
+   "related_skills": [
+    {
+     "required": "Pandas",
+     "has": "Python"
+    },
+    {
+     "required": "NumPy",
+     "has": "Python"
+    }
+   ],
+   "missing_skills": [
+    "Statistics",
+    "Machine Learning",
+    "Data Analysis",
+    "Feature Engineering",
+    "Scikit-learn",
+    "Deep Learning",
+    "Data Visualization",
+    "Jupyter",
+    "TensorFlow"
+   ],
+   "extra_skills": [
+    "Spring Boot",
+    "Database Design",
+    "Documentation",
+    "Redis",
+    "Microservices",
+    "MySQL",
+    "System Design",
+    "Jenkins",
+    "Django",
+    "Agile",
+    "OOP",
+    "Git"
+   ],
+   "rank": 14,
+   "shortlisted": false
+  }
+ ],
+ "summary": {
+  "total": 14,
+  "average_score": 29.9,
+  "strong_matches": 2
+ }
+}
