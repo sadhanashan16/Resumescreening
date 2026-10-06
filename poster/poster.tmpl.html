@@ -12,16 +12,17 @@
   #poster { position: relative; width: 2480px; height: 1754px; background: linear-gradient(180deg, #ffffff 0%, #f3fafe 100%); overflow: hidden; }
 
   /* header */
-  .header { height: 116px; background: {{NAVY}}; color: #fff; text-align: center; padding-top: 10px; }
-  .header h1 { font-size: 58px; font-weight: 800; letter-spacing: .01em; line-height: 1.1; }
-  .header p { font-size: 33px; font-weight: 500; line-height: 1.3; color: #d6ebff; }
-  .title { height: 94px; display: flex; align-items: center; justify-content: center; gap: 28px; background: #fff; border-bottom: 5px solid {{CYAN}}; }
-  .title h2 { font-size: 70px; font-weight: 800; color: {{NAVY}}; letter-spacing: -.005em; }
+  .header { position: relative; height: 148px; background: {{NAVY}}; color: #fff; text-align: center; padding-top: 10px; }
+  .lg { position: absolute; top: 12px; height: 114px; background: #fff; border-radius: 12px; padding: 4px 8px; } .lgL { left: 30px; } .lgR { right: 30px; height: 114px; }
+  .header h1 { font-size: 56px; font-weight: 800; letter-spacing: .01em; line-height: 1.1; }
+  .header p { font-size: 30px; font-weight: 500; line-height: 1.3; color: #d6ebff; }
+  .title { height: 88px; display: flex; align-items: center; justify-content: center; gap: 28px; background: #fff; border-bottom: 5px solid {{CYAN}}; }
+  .title h2 { font-size: 68px; font-weight: 800; color: {{NAVY}}; letter-spacing: -.005em; }
   .title h2 span { color: {{BLUE}}; }
   .logo { width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(135deg, {{BLUE}}, {{CYAN}}); color: #fff; font-size: 50px; font-weight: 800; display: grid; place-items: center; }
 
   /* grid */
-  .body { position: absolute; left: 30px; top: 230px; width: 2420px; height: 1316px; display: flex; gap: 22px; }
+  .body { position: absolute; left: 30px; top: 252px; width: 2420px; height: 1304px; display: flex; gap: 22px; }
   .col { display: flex; flex-direction: column; gap: 24px; height: 100%; }
   .L { width: 740px; } .C { width: 1060px; } .R { width: 576px; }
 
@@ -51,9 +52,9 @@
 
   /* methodology flow */
   .flow { display: flex; align-items: center; justify-content: space-between; height: 100%; padding: 14px 0 0; }
-  .step { position: relative; flex: 1 1 0; background: #fff; border: 2.5px solid {{BLUE}}; border-radius: 18px; text-align: center; padding: 20px 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 2px; height: 130px; }
+  .step { position: relative; flex: 1 1 0; background: #fff; border: 2.5px solid {{BLUE}}; border-radius: 18px; text-align: center; padding: 14px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 1px; height: 134px; }
   .step .pico { position: static; flex: none; }
-  .step b { font-size: 23px; color: {{NAVY}}; line-height: 1.1; margin-top: 2px; }
+  .step b { font-size: 22px; white-space: nowrap; color: {{NAVY}}; line-height: 1.1; margin-top: 2px; }
   .step small { font-size: 17px; color: #37506f; line-height: 1.12; padding: 0 2px; }
   .step .num { position: absolute; left: -4px; top: -14px; background: {{CYAN}}; color: #fff; width: 34px; height: 34px; border-radius: 50%; font-weight: 800; font-size: 22px; display: grid; place-items: center; }
   .arr { color: {{CYAN}}; font-size: 30px; padding: 0 3px; }
@@ -72,7 +73,7 @@
   /* results */
   .kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 12px; }
   .kpi { background: {{NAVY}}; color: #fff; border-radius: 18px; padding: 5px 8px 6px; text-align: center; }
-  .kpi b { display: block; font-size: 42px; line-height: 1.05; font-weight: 800; color: #7fe0ff; letter-spacing: -.01em; }
+  .kpi b { display: block; font-size: 38px; line-height: 1.05; font-weight: 800; color: #7fe0ff; letter-spacing: -.01em; }
   .kpi span { display: block; font-size: 20px; font-weight: 700; line-height: 1.15; margin-top: 2px; }
   .kpi small { display: block; font-size: 17px; color: #cfe6fb; line-height: 1.15; margin-top: 2px; }
   .rgrid { display: flex; gap: 16px; }
@@ -88,23 +89,26 @@
   svg.cm { width: 100%; height: auto; display: block; } svg.rank { width: 100%; height: auto; display: block; } svg.wts { width: 100%; height: auto; display: block; }
 
   /* references / team */
-  ol.refs { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 26px; padding-right: 64px; font-size: 18px; line-height: 1.2; counter-reset: r; }
+  ol.refs { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px 24px; padding-right: 64px; font-size: 17px; line-height: 1.16; counter-reset: r; }
   ol.refs li { counter-increment: r; padding-left: 28px; position: relative; } ol.refs li::before { content: counter(r) "."; position: absolute; left: 0; font-weight: 800; color: {{NAVY}}; }
-  .footer { position: absolute; left: 30px; top: 1566px; width: 2420px; height: 174px; display: flex; gap: 22px; }
+  .footer { position: absolute; left: 30px; top: 1578px; width: 2420px; height: 162px; display: flex; gap: 22px; }
   .footer .panel { height: 100%; } .footer .fr { flex: none; width: 1700px; } .footer .ft { flex: none; width: 698px; }
   .team-line { display: flex; align-items: flex-end; gap: 10px; font-size: 24px; margin-bottom: 4px; }
   .team-line i { flex: 1; border-bottom: 2px solid #5b7da3; height: 24px; }
   .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+  .tm { font-size: 23px; line-height: 1.3; } .tm span { color: #37506f; } .tm .fg { margin-top: 5px; padding-top: 4px; border-top: 2px solid {{EDGE}}; }
   .foot { position: absolute; left: 0; right: 0; bottom: 4px; text-align: center; font-size: 17px; color: #5b7da3; }
 </style>
 </head>
 <body>
 <div id="poster">
   <div class="header">
+    <img class="lg lgL" src="{{LOGO_CIT}}" alt="Chennai Institute of Technology logo">
+    <img class="lg lgR" src="{{LOGO_ANNA}}" alt="Anna University emblem">
     <h1>CHENNAI INSTITUTE OF TECHNOLOGY, CHENNAI (Autonomous)</h1>
-    <p>Affiliated to Anna University, Chennai · Department of Computer Science and Engineering · B.E. · PBL Project</p>
+    <p>Affiliated to Anna University, Chennai · Department of Computer Science and Engineering · B.E.<br>Project-Based Learning (PBL) · Machine Learning · Academic Year 2026–2027</p>
   </div>
-  <div class="title"><div class="logo">R</div><h2>ResumeIQ: <span>AI-Based Resume Screening &amp; Job Matching System</span></h2></div>
+  <div class="title"><h2>ResumeIQ: <span>AI-Based Resume Screening &amp; Job Matching System</span></h2></div>
 
   <div class="body">
     <!-- ============ LEFT ============ -->
@@ -198,10 +202,9 @@
         <li>Manning, Raghavan &amp; Schütze, <i>Introduction to Information Retrieval</i>, Cambridge Univ. Press, 2008.</li>
       </ol></div></section>
     <section class="panel ft"><div class="pill">PROJECT TEAM</div>{{ICO_USERS}}
-      <div class="pbody"><div class="team-grid">
-        <div class="team-line">1.<i></i></div><div class="team-line">2.<i></i></div>
-        <div class="team-line">3.<i></i></div><div class="team-line">4.<i></i></div></div>
-        <div class="team-line"><b>Faculty Guide:</b><i></i></div></div></section>
+      <div class="pbody tm"><div><b>1.</b> Sadhana Shanmugam <span>— 2104251040837</span></div>
+        <div><b>2.</b> Dhanya Sri Mohandass <span>— 2104251040189</span></div>
+        <div class="fg"><b>Faculty Guide (Mentor):</b> Ms. Swathi L, Assistant Professor</div></div></section>
   </div>
 </div>
 </body>

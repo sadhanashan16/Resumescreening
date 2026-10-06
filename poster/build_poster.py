@@ -167,16 +167,15 @@ def ranking_svg(rows) -> str:
 def weights_svg() -> str:
     parts = [("Text sim.", 40, NAVY), ("Skills", 30, BLUE), ("Role fit", 15, CYAN), ("Exp.", 10, "#6cc4e6"), ("Edu.", 5, "#a9dcf0")]
     W, x = 340, 0
-    s = [f'<svg viewBox="0 0 {W} 64" xmlns="http://www.w3.org/2000/svg" class="wts" font-family="inherit">']
+    s = [f'<svg viewBox="0 0 {W} 82" xmlns="http://www.w3.org/2000/svg" class="wts" font-family="inherit">']
     for name, w, col in parts:
         ww = W * w / 100
-        s.append(f'<rect x="{x:.1f}" y="0" width="{ww - 2:.1f}" height="34" rx="4" fill="{col}"/>')
-        if w >= 10:
-            s.append(f'<text x="{x + (ww - 2) / 2:.1f}" y="24" text-anchor="middle" font-size="18" font-weight="800" fill="#fff">{w}%</text>')
-        else:
-            s.append(f'<text x="{x + (ww - 2) / 2:.1f}" y="24" text-anchor="middle" font-size="15" font-weight="800" fill="{NAVY}">{w}</text>')
-        s.append(f'<text x="{x + (ww - 2) / 2:.1f}" y="58" text-anchor="middle" font-size="15" fill="#37506f">{name}</text>')
+        s.append(f'<rect x="{x:.1f}" y="0" width="{ww - 2:.1f}" height="32" rx="4" fill="{col}"/>')
+        if w >= 15:
+            s.append(f'<text x="{x + (ww - 2) / 2:.1f}" y="23" text-anchor="middle" font-size="18" font-weight="800" fill="#fff">{w}%</text>')
         x += ww
+    s.append(f'<text x="0" y="54" font-size="15" fill="#37506f">Text similarity 40 · Skills 30 · Role fit 15</text>')
+    s.append(f'<text x="0" y="72" font-size="15" fill="#37506f">Experience 10 · Education 5  (weights, %)</text>')
     s.append("</svg>")
     return "".join(s)
 
@@ -228,12 +227,12 @@ def main():
             ("python-docx", "Dx"), ("joblib", "Jb"), ("HTML·CSS·JS", "Js"), ("Gunicorn", "Gu"), ("Docker", "Dk"), ("Render", "Rn")]
     tech_html = "".join(f'<div class="tech"><b>{b}</b>{n}</div>' for n, b in tech)
 
-    steps = [("doc", "Upload", "PDF · DOC · DOCX · TXT"), ("wrench", "Extract text", "PDF · DOCX · DOC"),
-             ("code", "NLP parsing", "skills, degrees|& experience"), ("shield", "Normalise", "PII removed · skill tokens"),
-             ("db", "TF-IDF", "1–2 grams"), ("gear", "Classify", "Naive Bayes + SVM"), ("chart", "Rank & shortlist", "5-part score")]
+    steps = [("doc", "Upload", "PDF · DOC|DOCX · TXT"), ("wrench", "Extract", "text from|each file"),
+             ("code", "NLP parse", "skills and|degrees"), ("shield", "Normalise", "PII removed|skill tokens"),
+             ("db", "TF-IDF", "1–2 grams|vectors"), ("gear", "Classify", "Naive Bayes|+ SVM"), ("chart", "Rank", "score,|shortlist")]
     flow = ""
     for i, (ic, t, s) in enumerate(steps, 1):
-        flow += f'<div class="step"><span class="num">{i}</span>{icon(ic, BLUE, 54)}<b>{t}</b><small>{s.replace("|", "<br>")}</small></div>'
+        flow += f'<div class="step"><span class="num">{i}</span>{icon(ic, BLUE, 36)}<b>{t}</b><small>{s.replace("|", "<br>")}</small></div>'
         if i < len(steps):
             flow += '<span class="arr">➜</span>'
 
@@ -271,7 +270,7 @@ def main():
         "{{SHOT_SCREEN}}": img_b64(ASSETS / "ui_screen.png", 1100, crop=(0, 780, 1420, 1270)),
         "{{N_SAMPLES}}": f"{M['n_samples']:,}", "{{LAT}}": lat, "{{N_TRAIN}}": f"{M['n_train']:,}", "{{N_TEST}}": f"{M['n_test']}",
         "{{N_FEAT}}": f"{M['n_features']:,}", "{{N_ROLES}}": str(M["n_roles"]), "{{N_SKILLS}}": str(len(SKILLS)),
-        "{{NAVY}}": NAVY, "{{BLUE}}": BLUE, "{{CYAN}}": CYAN, "{{LIGHT}}": LIGHT, "{{EDGE}}": EDGE, "{{INK}}": INK,
+        "{{LOGO_CIT}}": img_b64(ROOT / "report/assets/cover_logo.png", 330), "{{LOGO_ANNA}}": img_b64(ROOT / "report/assets/anna_emblem.png", 260), "{{NAVY}}": NAVY, "{{BLUE}}": BLUE, "{{CYAN}}": CYAN, "{{LIGHT}}": LIGHT, "{{EDGE}}": EDGE, "{{INK}}": INK,
         "{{ICO_DOC}}": icon("doc"), "{{ICO_TARGET}}": icon("target", "#d64545"), "{{ICO_GEAR}}": icon("gear"),
         "{{ICO_DB}}": icon("db"), "{{ICO_CHART}}": icon("chart"), "{{ICO_CHECK}}": icon("check", GREEN),
         "{{ICO_BULB}}": icon("bulb", AMBER), "{{ICO_BOOK}}": icon("book"), "{{ICO_USERS}}": icon("users"),

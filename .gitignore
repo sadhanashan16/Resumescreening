@@ -8,5 +8,3 @@ models/
 .env
 .DS_Store
 report/report.html
-poster/poster.png
-poster/poster.pdf
