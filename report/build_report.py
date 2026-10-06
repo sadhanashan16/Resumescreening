@@ -107,6 +107,29 @@ def overlay(content_pdf: bytes, ch1_index: int) -> bytes:
     return out.getvalue()
 
 
+def gap_report(content_pdf: bytes, ch1: int) -> list[tuple[int, float]]:
+    """Blank space left at the bottom of every numbered page (% of the text area); the last page is exempt."""
+    import subprocess, tempfile
+    import numpy as np
+    from PIL import Image
+    with tempfile.TemporaryDirectory() as d:
+        (Path(d) / "c.pdf").write_bytes(content_pdf)
+        subprocess.run(["pdftoppm", "-png", "-r", "40", str(Path(d) / "c.pdf"), str(Path(d) / "p")], check=True)
+        files = sorted(Path(d).glob("p-*.png"))
+        out = []
+        top, bottom = 102 / 841.92, (841.92 - 60) / 841.92
+        for i, f in enumerate(files):
+            if i < ch1:
+                continue
+            a = np.array(Image.open(f).convert("L"))
+            h = a.shape[0]
+            rows = np.where((a < 200).any(axis=1))[0]
+            rows = rows[(rows > top * h) & (rows < bottom * h)]
+            last = rows.max() / h if len(rows) else top
+            out.append((i - ch1 + 1, round(100 * (bottom - last) / (bottom - top), 1)))
+    return out
+
+
 def sanity_checks():
     """Assert every data-dependent claim written in the prose."""
     cands = C.RANK["candidates"]
@@ -132,6 +155,8 @@ def main():
     pages2 = locate(pdf2, assemble.body)
     if pages2 != pages:   # TOC length is stable, so one extra pass settles any drift
         html = assemble(pages2); pdf2 = render(html); pages2 = locate(pdf2, assemble.body)
+    gaps = gap_report(pdf2, int(pages2["_ch1"]))
+    print("pages ending with >6% blank:", [g for g in gaps[:-1] if g[1] > 6], "| last numbered page:", gaps[-1][0])
     final = overlay(pdf2, int(pages2["_ch1"]))
     OUT_PDF.write_bytes(final)
     (HERE / "report.html").write_text(html, encoding="utf-8")

@@ -6,6 +6,18 @@ import html
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import json as _json
+
+
+def load_tuning() -> dict:
+    import os
+    if os.environ.get('REPORT_TUNING'):
+        return _json.loads(os.environ['REPORT_TUNING'])
+    f = HERE / 'tuning.json'
+    return _json.loads(f.read_text()) if f.exists() else {}
+
+
+TUNING = load_tuning()
 
 
 def data_uri(path: Path) -> str:
@@ -13,13 +25,15 @@ def data_uri(path: Path) -> str:
     return f"data:image/{ext};base64," + base64.b64encode(path.read_bytes()).decode()
 
 
-CSS = """
+CSS_TEMPLATE = """
 @page { size: A4; margin: 36mm 25.4mm 21mm 25.4mm; }
 * { box-sizing: border-box; }
 html { font-family: 'Liberation Serif', 'Times New Roman', serif; font-size: 12pt; color: #000; }
-body { margin: 0; line-height: 1.5; text-align: justify; hyphens: manual; }
-p { margin: 0 0 8pt; orphans: 2; widows: 2; }
+body { margin: 0; line-height: LH_PLACEHOLDER; text-align: justify; hyphens: manual; }
+p { margin: 0 0 9pt; orphans: 2; widows: 2; }
 .pb { break-before: page; }
+.chead { break-after: avoid; break-inside: avoid; margin-top: 14pt; }
+.chead h1.chapter, .chead h1.ctitle { break-after: avoid; }
 .center { text-align: center; }
 .cover { text-align: center; line-height: 1.3; margin-top: -6mm; }
 .cover .title { font-size: 15pt; font-weight: bold; margin-top: 2mm; }
@@ -38,13 +52,14 @@ ol.num { margin: 2pt 0 8pt; padding-left: 36pt; } ol.num li { margin-bottom: 6pt
 table { border-collapse: collapse; width: 100%; margin: 6pt 0 2pt; font-size: 11.5pt; line-height: 1.22; text-align: left; break-inside: auto; }
 th { background: #d9d9d9; font-weight: bold; text-align: center; border: 1px solid #000; padding: 4pt 6pt; }
 td { border: 1px solid #000; padding: 3pt 6pt; vertical-align: middle; }
-tr { break-inside: avoid; }
+tr { break-inside: auto; }
+td { orphans: 2; widows: 2; }
 thead { display: table-header-group; }
 td.c { text-align: center; } td.r { text-align: right; }
 .cap { text-align: center; font-weight: bold; font-style: italic; margin: 4pt 0 12pt; line-height: 1.35; }
 figure { margin: 8pt 0 0; text-align: center; break-inside: avoid; }
 figure img { max-width: 100%; }
-pre.code { font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace; font-size: 7.9pt; line-height: 1.32; background: #f4f4f4; border: 1px solid #8c8c8c; padding: 6pt 8pt; margin: 6pt 0 2pt; white-space: pre-wrap; word-break: break-word; text-align: left; break-inside: avoid; }
+pre.code { font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace; font-size: 7.6pt; line-height: 1.3; background: #f4f4f4; border: 1px solid #8c8c8c; padding: 6pt 8pt; margin: 6pt 0 2pt; white-space: pre-wrap; word-break: break-word; text-align: left; break-inside: avoid; }
 .eq { text-align: center; margin: 4pt 0 8pt; font-style: italic; line-height: 1.6; }
 .eq sub, .eq sup { font-size: 70%; line-height: 0; }
 .note { font-size: 11pt; }
@@ -60,6 +75,9 @@ pre.code { font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace; font-s
 .toc .l1 { font-weight: bold; margin-top: 2pt; } .toc .l2 { padding-left: 14pt; }
 .lof .row { display: flex; align-items: baseline; text-align: left; line-height: 1.55; } .lof .row .t { } .lof .row .d { flex: 1; border-bottom: 1.4pt dotted #000; margin: 0 3pt; transform: translateY(-3pt);} .lof .row .n { min-width: 14pt; text-align: right; }
 """
+
+
+CSS = CSS_TEMPLATE.replace('LH_PLACEHOLDER', str(TUNING.get('line_height', 1.6)))
 
 
 class Doc:
@@ -80,11 +98,11 @@ class Doc:
     def chapter(self, title: str):
         self.chapter_no += 1
         n = self.chapter_no
-        self.raw(f'<div class="pb"></div><h1 class="chapter">CHAPTER {n}</h1><h1 class="ctitle">{title}</h1>')
+        self.raw(f'<div class="chead"><h1 class="chapter">CHAPTER {n}</h1><h1 class="ctitle">{title}</h1></div>')
         self.toc.append((1, f"CHAPTER {n}: {title}", f"CHAPTER {n}"))
 
     def special(self, title: str, toc=True, cls=""):
-        self.raw(f'<div class="pb"></div><h1 class="chapter {cls}" style="margin-bottom:10pt">{title}</h1>')
+        self.raw(f'<div class="chead"><h1 class="chapter {cls}" style="margin-bottom:6pt">{title}</h1></div>')
         if toc:
             self.toc.append((1, title, title))
 
@@ -112,9 +130,18 @@ class Doc:
         return f"{kind} {self.chapter_no}.{self.counters[key]}"
 
     def figure(self, img: Path, caption: str, width_pct=100):
+        width_pct = round(min(100, width_pct * TUNING.get('scales', {}).get(img.stem, 1.0)), 1)
         label = self._label("Figure")
         self.figs.append((label, caption))
         self.raw(f'<figure><img src="{data_uri(img)}" style="width:{width_pct}%"><div class="cap">{label} — {caption}</div></figure>')
+
+    def figure_row(self, imgs: list[Path], caption: str, width_pct=100):
+        width_pct = round(min(100, width_pct * TUNING.get('scales', {}).get(imgs[0].stem, 1.0)), 1)
+        label = self._label("Figure")
+        self.figs.append((label, caption))
+        each = (width_pct - 3) / len(imgs)
+        cells = "".join(f'<img src="{data_uri(i)}" style="width:{each}%;vertical-align:top;margin:0 0.4%">' for i in imgs)
+        self.raw(f'<figure style="margin:6pt 0 0">{cells}<div class="cap">{label} — {caption}</div></figure>')
 
     def table(self, headers: list[str], rows: list[list[str]], caption: str | None, widths: list[int] | None = None,
               center_cols: tuple[int, ...] = ()):

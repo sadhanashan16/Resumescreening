@@ -358,10 +358,10 @@ def build_body() -> Doc:
       "vectorisation → Naive Bayes and SVM role probabilities → ensemble → five-part scoring against the job description → "
       "ranked shortlist or role recommendations delivered through a Flask web application and JSON API. Figure 4.1 shows this as "
       "a block diagram; each block is described below it.")
-    d.figure(FIG / "fig_architecture.png", "System Architecture Diagram", 100)
     p("Input and extraction: a resume is accepted as PDF, DOC, DOCX or TXT (up to 30 files of 5 MB each per run). The file type "
       "is checked by extension and by content signature, and text is extracted with pypdf, python-docx or antiword; a file with "
       "no readable text (for example a scanned image) is rejected with an explanatory message.")
+    d.figure(FIG / "fig_architecture.png", "System Architecture Diagram", 100)
     p(f"NLP parsing and normalisation: the parser splits the text into sections, recognises skills from the {NSK}-skill taxonomy, "
       "estimates years of experience from date ranges and stated figures, detects the highest degree, and extracts contact "
       "details. For scoring, the name, e-mail, phone numbers and links are removed, and every recognised skill is replaced by a "
@@ -480,23 +480,50 @@ def build_body() -> Doc:
     p("The home page explains the five-stage pipeline and links to the two tools. In recruiter mode (Screen candidates) the "
       "user pastes a job description or loads one of the twelve example descriptions, adds resumes by drag-and-drop (or ticks the "
       "built-in sample resumes for a quick demonstration) and chooses the shortlist size.")
-    d.figure(FIG / "ui_home.png", "Home Page of ResumeIQ", 82)
-    d.figure(FIG / "ui_screen_form.png", "Screen Candidates Page with a Job Description and Resumes", 82)
+    d.figure_row([FIG / "ui_home.png", FIG / "ui_screen_form.png"], "Home Page (left) and Screen Candidates Page with a Job Description and Resumes (right)", 100)
     p("The results page shows the job type detected from the description (with the classifier's confidence), the skills "
       "extracted from it and summary counts, followed by one card per candidate in rank order. Each card shows the score and "
       "grade, the predicted role, estimated experience and education, and the matched, related (partial credit) and missing "
       "skills; an expandable panel gives the per-component score bars and the separate Naive Bayes and SVM predictions. The "
       "shortlist and the full ranking can be downloaded as CSV, with spreadsheet formula characters neutralised.")
-    d.figure(FIG / "ui_screen_results.png", "Screening Results: Ranked Candidates with Skill Evidence", 82)
+    d.figure(FIG / "ui_screen_results.png", "Screening Results: Ranked Candidates with Skill Evidence", 54)
     p("In candidate mode (Find job match), a single resume, pasted text or a sample is analysed and the best-fit roles are "
       "listed with their scores, the skills already matched and the skills to learn. The Model insights page reports the "
       "dataset, the model comparison, the per-role results, the confusion matrix and the most predictive terms, and states "
       "prominently that the data are synthetic.")
-    d.figure(FIG / "ui_match_results.png", "Find Job Match: Role Recommendations for One Resume", 82)
-    d.figure(FIG / "ui_insights.png", "Model Insights Page", 82)
+    d.figure_row([FIG / "ui_match_results.png", FIG / "ui_insights.png"], "Find Job Match: Role Recommendations (left) and the Model Insights Page (right)", 100)
     p("Uploaded files are read into memory, scored and discarded; nothing is written to disk or stored. File type is validated "
       "by extension and content signature, size and count are limited, error responses never expose internals, and the "
       "browser is restricted by a Content Security Policy that blocks inline scripts and styles.")
+
+    sec("5.4", "Interfaces and Deployment")
+    p("The same engine serves both the web pages and a JSON API, so the system can be used from a browser or called by another "
+      "program. Table 5.1 lists the endpoints. Uploads are accepted as multipart form data; the resumes are read into memory, "
+      "scored and discarded, and error responses are returned as JSON with a plain-language message.")
+    d.table(["Endpoint", "Method", "Purpose"],
+            [["/", "GET", "Home page with the pipeline overview"],
+             ["/screen, /match, /insights", "GET", "Recruiter screening page, single-resume job-match page and model-insights page"],
+             ["/api/screen", "POST", "Rank uploaded resumes (up to 30) against a job description and return the shortlist as JSON"],
+             ["/api/match", "POST", "Recommend job roles for one resume (uploaded file, pasted text or a built-in sample)"],
+             ["/api/roles, /api/samples, /api/model", "GET", "Example job descriptions, sample resume list and the stored training metrics"],
+             ["/health", "GET", "Health check used by the hosting platform"]],
+            "Web Pages and JSON API Endpoints", widths=[34, 12, 54], center_cols=(1,))
+    p("Deployment follows the standard container route for a machine-learning web service. The Dockerfile starts from a slim "
+      "Python 3.12 image, installs antiword for legacy .doc files, installs the pinned requirements, and trains the model while "
+      "the image is built, so the container starts immediately and the deployed model is exactly the one that was evaluated. "
+      "The application runs under Gunicorn with one worker and four threads, which keeps the resident memory at about 184 MB "
+      "(measured) and therefore inside the 512 MB limit of Render's free plan. A render.yaml blueprint describes the web "
+      "service and its health check, and a GitHub Actions workflow runs the tests and builds the image on every push.")
+    d.table(["Test file", "Tests", "What it checks"],
+            [["test_skills_parser.py", "12", "Skill aliases and ambiguous words, Java versus JavaScript, text normalisation, contact details, experience from overlapping dates, education levels, job-description parsing"],
+             ["test_extractor.py", "9", "TXT, DOCX, PDF and legacy DOC extraction, and friendly errors for empty, corrupt, scanned or unsupported files"],
+             ["test_engine.py", "6", "Metrics file consistency, five hand-written resumes, ranking order, name-blind scoring, re-weighting when a requirement is missing, role recommendations"],
+             ["test_app.py", "7", "Page rendering and security headers, screening with uploads, validation of bad input, the 30-file limit, role matching and restricted sample downloads"]],
+            "Automated Test Suite (34 tests)", widths=[24, 9, 67], center_cols=(1,))
+    p("Besides the automated tests, each page was driven in a real browser (Chromium): a job description was loaded, resumes were "
+      "uploaded, the CSV export was downloaded and the model-insights page was opened, with the browser console checked for "
+      "script and Content-Security-Policy errors. The deployed configuration was also checked by installing only the pinned "
+      "requirements into a clean environment, training the model and serving the application with Gunicorn.")
 
     # ------------------------------------------------------------ Chapter 6
     d.chapter("RESULTS AND DISCUSSION")
@@ -597,7 +624,7 @@ def build_body() -> Doc:
       "also learned to review each other's work before every milestone, which caught several defects before they reached the "
       "demonstration.")
     sec("7.3", "Course Outcomes — Evidence Summary")
-    d.figure(FIG / "fig_outcomes.png", "Course Outcomes", 62)
+    d.figure(FIG / "fig_outcomes.png", "Course Outcomes", 46)
     ul(["Technical / ML competency: the Naive Bayes and SVM text classifiers, TF-IDF features, probability calibration and "
         "cosine-similarity scoring, evaluated with a hold-out set and cross-validation, demonstrate applied understanding of "
         "supervised text classification (Chapters 2 and 4).",
