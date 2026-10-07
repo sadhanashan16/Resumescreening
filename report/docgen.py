@@ -98,11 +98,11 @@ class Doc:
     def chapter(self, title: str):
         self.chapter_no += 1
         n = self.chapter_no
-        self.raw(f'<div class="chead"><h1 class="chapter">CHAPTER {n}</h1><h1 class="ctitle">{title}</h1></div>')
+        self.raw(f'<div class="pb"></div><div class="chead" style="margin-top:0"><h1 class="chapter">CHAPTER {n}</h1><h1 class="ctitle">{title}</h1></div>')
         self.toc.append((1, f"CHAPTER {n}: {title}", f"CHAPTER {n}"))
 
     def special(self, title: str, toc=True, cls=""):
-        self.raw(f'<div class="chead"><h1 class="chapter {cls}" style="margin-bottom:6pt">{title}</h1></div>')
+        self.raw(f'<div class="pb"></div><div class="chead" style="margin-top:0"><h1 class="chapter {cls}" style="margin-bottom:6pt">{title}</h1></div>')
         if toc:
             self.toc.append((1, title, title))
 
@@ -156,14 +156,15 @@ class Doc:
             self.tabs.append((label, caption))
             self.raw(f'<div class="cap">{label} — {caption}</div>')
 
-    def code(self, text: str, caption: str | None = None, kind="Code"):
-        block = f'<pre class="code">{html.escape(text)}</pre>'
+    def code(self, text: str, caption: str | None = None, kind="Code", split: bool = False):
+        pre_css = ' style="break-inside:auto;orphans:5;widows:5"' if split else ""
+        self.raw(f'<pre class="code"{pre_css}>{html.escape(text)}</pre>')
         if caption:
             label = self._label(kind)
             if kind == "Figure":
                 self.figs.append((label, caption))
-            block += f'<div class="cap">{label} — {caption}</div>'
-        self.raw(block)
+            cap_css = ' style="break-before:avoid"' if split else ""
+            self.raw(f'<div class="cap"{cap_css}>{label} — {caption}</div>')
 
     def html(self) -> str:
         return "".join(self.parts)

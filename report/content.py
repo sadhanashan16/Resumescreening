@@ -208,93 +208,79 @@ def build_body() -> Doc:
     # ------------------------------------------------------------ Chapter 1
     d.chapter("INTRODUCTION")
     sec("1.1", "Background")
-    p("Hiring begins with a screening problem. A single advertised vacancy can attract hundreds or thousands of applications, and "
-      "recruiters must decide, often in minutes per resume, which of them deserve an interview. Done by hand, this first-pass "
-      "screening is slow, tiring and inconsistent: two reviewers may rank the same resume differently, one reviewer may judge "
-      "differently at the start and the end of a long day, and a qualified candidate can be overlooked simply because the resume "
-      "uses different wording from the job advertisement. Applicant tracking systems that filter on exact keywords reduce the "
-      "workload but inherit the same weakness, because “machine learning” and “ML”, or “scikit-learn” and “sklearn”, are "
-      "different strings to a keyword filter but the same skill to a person.")
-    p("Resumes also arrive as unstructured documents in several file formats (PDF, Word and plain text) with no common layout. "
-      "Before any comparison can be made, the text must be extracted, the sections must be located, and facts such as skills, "
-      "education and years of experience must be recovered from free text. Machine learning offers a natural way to handle the "
-      "comparison step: a text-classification model can learn which vocabulary characterises each job family, and a similarity "
-      "measure over weighted term vectors can quantify how closely a resume matches a particular job description.")
+    p("Hiring begins with a screening problem. A single vacancy can attract hundreds or thousands of applications, and "
+      "recruiters must decide, often in minutes per resume, which deserve an interview. Done by hand, this first pass is slow, "
+      "tiring and inconsistent: two reviewers may rank the same resume differently, and a qualified candidate can be "
+      "overlooked simply because the resume words a skill differently from the advertisement. Keyword filters reduce the "
+      "workload but share the weakness, because “machine learning” and “ML”, or “scikit-learn” and “sklearn”, are different "
+      "strings to a filter but the same skill to a person.")
+    p("Resumes also arrive as unstructured documents (PDF, Word, plain text) with no common layout, so the text must first be "
+      "extracted and facts such as skills, education and years of experience recovered from free text. A text-classification "
+      "model can then learn which vocabulary characterises each job family, and similarity over weighted term vectors can "
+      "quantify how closely a resume matches a job description.")
     p("Automation is not automatically fair. A review of algorithmic-hiring practice found that vendors say little about how "
-      "bias is actually validated [1], and a widely reported case in 2018 involved a company withdrawing an experimental "
-      "machine-learning recruiting tool after it was found to disadvantage women [2]. A screening system should therefore be "
-      "explainable, should keep personal identifiers out of its scoring, and should be positioned as a decision aid rather than "
-      "a decision maker.")
-    p("ResumeIQ was undertaken as the Project-Based Learning (PBL) component of the Machine Learning course (CS5305). It was "
-      "deliberately scoped around the build–learn cycle that PBL is meant to teach: a baseline text classifier, a refinement "
-      "driven by what the first results revealed, and a final system that the team can explain component by component rather "
-      "than point at as a black box.")
+      "bias is validated [1], and in 2018 a company withdrew an experimental recruiting tool found to disadvantage women [2]. "
+      "A screening system should therefore be explainable, keep personal identifiers out of its scoring, and be positioned as "
+      "a decision aid rather than a decision maker.")
+    p("ResumeIQ was undertaken as the Project-Based Learning (PBL) component of the Machine Learning course (CS5305), "
+      "following the build–learn cycle that PBL is meant to teach: a baseline text classifier, a refinement driven by what the "
+      "first results revealed, and a final system the team can explain component by component.")
     sec("1.2", "Driving Question")
     p("Can a classical machine-learning pipeline built from TF-IDF features, Naive Bayes and Support Vector Machine classifiers, and "
       "cosine similarity turn unstructured resumes into a ranked, explainable shortlist for a given job description, and "
       "recommend suitable job roles for a single resume, without using the candidate's name or contact details and while "
       "running on ordinary laptop hardware? And if two structurally different classifiers are used, does combining them give a "
       "more reliable role signal than either one alone?")
-    p("This question narrows into a concrete, buildable task: extract skills, education and experience from resumes with NLP; "
-      "represent resume and job text as TF-IDF vectors; classify each resume into one of twelve job roles with Naive Bayes and "
-      "an SVM; and combine text similarity, skill coverage, role agreement, experience and education into a single score that a "
-      "recruiter can inspect rather than simply trust.")
+    p("This narrows into a buildable task: extract skills, education and experience with NLP; represent resume and job text as "
+      "TF-IDF vectors; classify each resume into one of twelve roles with Naive Bayes and an SVM; and combine text similarity, "
+      "skill coverage, role agreement, experience and education into one score a recruiter can inspect.")
     sec("1.3", "Objectives")
-    ul(["To accept resumes in PDF and DOC formats (and, in addition, DOCX and plain text) and convert them reliably into text.",
-        "To extract key details (skills, education and experience) using natural-language-processing techniques, and to remove "
-        "names and contact details before scoring.",
+    ul(["To accept resumes in PDF and DOC formats (and DOCX and plain text) and convert them reliably into text.",
+        "To extract skills, education and experience using NLP, removing names and contact details before scoring.",
         "To match resumes with job descriptions and measure suitability using TF-IDF vectors and cosine similarity.",
-        "To apply TF-IDF, Naive Bayes and SVM for ranking and classification, and to evaluate them with a held-out test set and "
-        "cross-validation.",
-        "To generate a shortlist of the top candidates automatically, with an explanation (matched, related and missing skills) "
-        "for every candidate, and to recommend suitable job roles for a single resume.",
-        "To deliver the system as a working website built with Python, Scikit-learn and Pandas, packaged for deployment on "
-        "Render, and to document the weekly PBL progress and what the process taught each member."])
+        "To apply TF-IDF, Naive Bayes and SVM for ranking and classification, evaluated with a held-out set and cross-validation.",
+        "To generate a top-candidate shortlist automatically, explaining each candidate with matched, related and missing "
+        "skills, and to recommend suitable roles for a single resume.",
+        "To deliver a working website built with Python, Scikit-learn and Pandas, packaged for deployment on Render, and to "
+        "document the weekly PBL progress and what each member learned."])
     sec("1.4", "Scope and Limitations")
-    p(f"ResumeIQ models {M['n_roles']} job roles (Data Scientist, Machine Learning Engineer, Data Analyst, Data Engineer, "
-      "Backend Developer, Frontend Developer, Full Stack Developer, DevOps Engineer, Mobile App Developer, QA Engineer, "
-      "Cybersecurity Analyst and Business Analyst) and works on English-language, text-based resumes. Skills are recognised "
-      f"from a curated taxonomy of {NSK} skills with aliases (for example “sklearn” for Scikit-learn), so skills outside the "
-      "taxonomy are not detected. Scanned or image-only documents contain no text layer and are rejected with a clear message; "
-      "optical character recognition is outside the scope of this build.")
-    p(f"The classifiers were trained on {M['n_samples']:,} synthetic resumes generated from the role catalog, because real "
-      "resumes are personal data and no real labelled corpus was available to the team. The reported accuracy therefore "
-      "measures how well the pipeline separates the synthetic roles and must not be read as a real-world accuracy estimate "
-      "(Chapter 6). The match score is a relative suitability indicator, not a verdict; the system stores no uploaded files and "
-      "no candidate data, and every shortlist should be reviewed by a person.")
+    p(f"ResumeIQ models {M['n_roles']} technology and business job roles (for example Data Scientist, DevOps Engineer, QA Engineer "
+      f"and Business Analyst) and works on English, text-based resumes. Skills come from a taxonomy of {NSK} skills with "
+      "aliases (for example “sklearn” for Scikit-learn), so skills outside it are not detected. Scanned, image-only documents "
+      "have no text layer and are rejected with a clear message; OCR is outside the scope of this build.")
+    p(f"The classifiers were trained on {M['n_samples']:,} synthetic resumes, because real resumes are personal data and no real "
+      "labelled corpus was available. The reported accuracy therefore measures how well the pipeline separates the synthetic "
+      "roles and is not a real-world estimate (Chapter 6). No uploaded file or candidate data is stored, and every shortlist "
+      "should be reviewed by a person.")
 
     # ------------------------------------------------------------ Chapter 2
     d.chapter("CONCEPT EXPLORATION")
     sec("2.1", "Related Approaches")
     sub("2.1.1", "Text representation and similarity")
-    p("Spärck Jones showed in 1972 that a term is a more useful discriminator when it occurs in fewer documents, and proposed "
-      "weighting terms by their inverse document frequency [3]. Salton and Buckley later compared many term-weighting schemes "
-      "experimentally and found that schemes combining a term-frequency component, an inverse-document-frequency component and "
-      "length normalisation performed well [4]. In the resulting TF-IDF representation each document becomes a sparse vector; "
-      "after length normalisation, the cosine of the angle between two vectors measures how much weighted vocabulary the "
-      "documents share [5]. This is exactly what is needed to compare a resume with a job description, and it needs no labelled "
-      "data, which is why it forms the similarity component of ResumeIQ's score.")
+    p("Spärck Jones proposed in 1972 that terms occurring in fewer documents are better discriminators and should be weighted "
+      "by their inverse document frequency [3]. Salton and Buckley compared many term-weighting schemes and found that those "
+      "combining term frequency, inverse document frequency and length normalisation performed well [4]. In the resulting "
+      "TF-IDF representation each document is a sparse vector, and after length normalisation the cosine of the angle between "
+      "two vectors measures how much weighted vocabulary the documents share [5]. This is what is needed to compare a resume "
+      "with a job description, and it needs no labelled data, so it forms the similarity component of ResumeIQ's score.")
     sub("2.1.2", "Probabilistic text classification")
-    p("McCallum and Nigam compared two event models for Naive Bayes text classification and found that the multinomial model, "
-      "which uses word counts, generally performed better than the multi-variate Bernoulli model when the vocabulary was large [6]. "
-      "Naive Bayes is attractive for a project of this size because it trains in a single pass, works with small amounts of "
-      "data, gives class probabilities directly and exposes which words drive a decision; it was therefore chosen as the first "
-      "classifier. Its main weakness is the independence assumption, which makes its probabilities over-confident.")
+    p("McCallum and Nigam compared two Naive Bayes event models and found that the multinomial model, which uses word counts, "
+      "generally performed better than the Bernoulli model when the vocabulary was large [6]. Naive Bayes trains in a single "
+      "pass, works with little data and gives class probabilities directly, so it was chosen as the first classifier; its main "
+      "weakness is the independence assumption, which makes its probabilities over-confident.")
     sub("2.1.3", "Support Vector Machines for text")
-    p("Cortes and Vapnik introduced the soft-margin support-vector network [7]. Joachims argued that text categorisation suits "
-      "SVMs because documents are high-dimensional, sparse and mostly linearly separable, and reported in his experiments that "
-      "SVMs outperformed k-nearest-neighbour, Naive Bayes, Rocchio and decision-tree classifiers [8]. Linear SVMs for large sparse "
-      "data are efficiently implemented in LIBLINEAR [9], which underlies scikit-learn's LinearSVC. An SVM outputs a distance "
-      "from the decision boundary rather than a probability; Platt proposed fitting a sigmoid to these scores to obtain "
-      "calibrated posterior probabilities [10], which ResumeIQ uses so that the SVM and Naive Bayes outputs can be averaged on "
-      "the same scale.")
+    p("Cortes and Vapnik introduced the soft-margin support-vector network [7]. Joachims argued that text suits SVMs because "
+      "documents are high-dimensional, sparse and mostly linearly separable, and reported that SVMs outperformed k-nearest-"
+      "neighbour, Naive Bayes, Rocchio and decision-tree classifiers in his experiments [8]. Linear SVMs for sparse data are "
+      "implemented efficiently in LIBLINEAR [9], which underlies scikit-learn's LinearSVC. Because an SVM outputs a distance "
+      "from the boundary rather than a probability, Platt's sigmoid fitting [10] is used to calibrate it so that its output "
+      "can be averaged with Naive Bayes.")
     sub("2.1.4", "Algorithmic hiring and fairness")
-    p("The hiring literature adds a design constraint that the classification literature does not. Raghavan et al. reviewed how "
-      "vendors of algorithmic hiring tools describe their bias-mitigation practices and found that public information on how "
-      "these claims are validated is limited [1], and the 2018 withdrawal of an experimental recruiting tool that penalised "
-      "women's resumes [2] illustrates how a model trained on historical data can reproduce historical bias. ResumeIQ responds "
-      "in three modest ways: personal identifiers (name, e-mail, phone, links) are removed before scoring; every score is "
-      "decomposed into visible components; and the interface and documentation state that the output is a decision aid.")
+    p("The hiring literature adds a constraint that the classification literature does not. Raghavan et al. found limited "
+      "public information on how vendors validate bias-mitigation claims [1], and the 2018 withdrawal of a recruiting tool that "
+      "penalised women's resumes [2] shows how a model trained on historical data can reproduce historical bias. ResumeIQ "
+      "responds modestly: identifiers (name, e-mail, phone, links) are removed before scoring, every score is decomposed into "
+      "visible components, and the output is presented as a decision aid.")
     sec("2.2", "Summary Table")
     d.table(["Ref.", "Approach / Model", "Setting", "Reported Result"],
             [["[3]", "Inverse document frequency term weighting", "Document-retrieval experiments", "Terms occurring in fewer documents are better discriminators; IDF weighting improved retrieval"],
@@ -306,13 +292,11 @@ def build_body() -> Doc:
              ["[1]", "Review of algorithmic-hiring bias claims", "Vendor practices (qualitative)", "Limited public information on how bias mitigation is validated"]],
             "Summary of Related Approaches", widths=[9, 29, 26, 36], center_cols=(0,))
     sec("2.3", "What This Told Us")
-    p("The literature pointed the team toward the same starting point: represent text with TF-IDF, and begin with Naive Bayes "
-      "and a linear SVM because they are the best-understood classifiers for sparse text and need no architecture decisions "
-      "beyond a few regularisation settings (Iteration 1, Chapter 4). Because the two models rest on different assumptions "
-      "(generative and independence-based on one side, margin-based on the other), the team decided to keep both and average "
-      "their calibrated probabilities in Iteration 2, rather than choose one. The skill taxonomy, the five-part match score, "
-      "the role-affinity measure and the name-blind scoring were the team's own additions, motivated by the explainability and "
-      "fairness concerns in [1] and [2]: a transparent rule or a visible component was preferred to an opaque number.")
+    p("The literature pointed the team to the same starting point: TF-IDF features with Naive Bayes and a linear SVM, the "
+      "best-understood classifiers for sparse text (Iteration 1, Chapter 4). Because the two rest on different assumptions "
+      "(generative and independence-based versus margin-based), the team kept both and averaged their calibrated probabilities "
+      "in Iteration 2. The skill taxonomy, the five-part score, the role-affinity measure and name-blind scoring were the "
+      "team's own additions, motivated by the explainability and fairness concerns in [1] and [2].")
 
     # ------------------------------------------------------------ Chapter 3
     d.chapter("PROJECT PLANNING AND TEAM ORGANISATION")
@@ -427,9 +411,6 @@ def build_body() -> Doc:
       "role profile (30%), weighted skill fit to the role's core and secondary skills (35%) and the classifier probability (35%), "
       "and lists the core skills the resume lacks as skills to learn.")
     d.figure(FIG / "fig_pipeline.png", "ML Scoring Pipeline Data Flow", 80)
-    sub("", "Job roles modelled")
-    d.table(["Job role", "Core skills used by the generator and the role profile"],
-            [[r["title"], ", ".join(r["core"])] for r in ROLES], "Job Roles Modelled and Their Core Skills", widths=[26, 74])
     sec("4.5", "Training Procedure")
     p("The labelled data are split 80/20 with stratification (1,920 training and 480 test resumes, 40 test resumes per role). "
       "Five-fold stratified cross-validation is run on the training portion with the TF-IDF vectoriser re-fitted inside every "
@@ -466,15 +447,14 @@ def build_body() -> Doc:
     p("The normalisation function removes personal identifiers and turns each skill spelling variant into one token, so “sklearn” "
       "and “scikit-learn” become the same feature:")
     d.code(src(text_utils.normalize_for_model), "Name-blind text normalisation (text_utils.py)")
-    p("The training script defines the three model components; the SVM is wrapped in a sigmoid calibrator:")
-    d.code(src(train_mod.make_vectorizer) + "\n\n" + src(train_mod.make_nb) + "\n\n" + src(train_mod.make_svm),
-           "TF-IDF, Naive Bayes and calibrated SVM definitions (train.py)")
     p("Skill coverage gives full credit for a skill the resume lists and half credit for a related skill from the same family:")
-    d.code(src(eng_mod.ScreeningEngine._skill_overlap), "Skill coverage with related-skill partial credit (engine.py)")
+    so = "\n".join(l for l in src(eng_mod.ScreeningEngine._skill_overlap).splitlines()
+                    if not l.startswith("@staticmethod") and '"""Coverage' not in l)
+    d.code(so, "Skill coverage with related-skill partial credit (engine.py, excerpt)", split=True)
     p("The final score is the re-normalised weighted sum of the components that are available for the job description:")
     sc = src(eng_mod.ScreeningEngine.score_resume)
     sc = sc[: sc.index("    have_set = set(job")].rstrip()
-    d.code(sc, "Five-part weighted scoring (engine.py, excerpt)")
+    d.code(sc, "Five-part weighted scoring (engine.py, excerpt)", split=True)
     sec("5.3", "User Interface / Demo")
     p("The home page explains the five-stage pipeline and links to the two tools. In recruiter mode (Screen candidates) the "
       "user pastes a job description or loads one of the twelve example descriptions, adds resumes by drag-and-drop (or ticks the "
@@ -565,36 +545,33 @@ def build_body() -> Doc:
     d.figure(FIG / "fig_ranking.png", "Live Ranking of the Sample Resumes for the Data Scientist Job", 78)
     sec("6.3", "Discussion")
     p("The most consistent observation is that the two classifiers agree: Naive Bayes and the calibrated SVM predicted the same "
-      "role for every resume in the sample screening, and their one-error performance on the hold-out set is shared. This is "
-      "partly a property of the synthetic data, in which each role has a distinctive skill vocabulary, but it also means that "
-      "the ensemble adds robustness rather than changing outcomes here. Its value would be expected to show on noisier real "
-      "resumes, where a probabilistic and a margin-based model are likely to disagree more often; this was not tested.")
+      "role for every resume in the sample screening, and their one-error result on the hold-out set is shared. This is partly "
+      "a property of the synthetic data, in which each role has a distinctive skill vocabulary; the ensemble's value would be "
+      "expected to show on noisier real resumes, where the two models are likely to disagree more often. This was not tested.")
     p("The scoring layer, rather than the classifier, is what makes the output useful to a recruiter. In the Data Scientist "
-      "example the two Data Scientist resumes scored in the strong band (72.0 and 70.7), related roles scored in the partial band "
-      "because they share part of the skill set, and unrelated roles scored below 30. Because every component is shown, a "
-      "recruiter can see why a candidate ranked where they did, for instance a missing Deep Learning skill or an experience "
-      "shortfall, and can override the score. The related-skill rule (half credit) and the role-affinity measure were both "
-      "introduced because the first, stricter versions penalised candidates for what a human reader would call near-misses.")
-    p("Name-blind scoring was verified directly: replacing a resume's name and e-mail address leaves its score "
-      "unchanged. This removes one channel through which bias could enter, but it is not a fairness guarantee: other fields, such "
-      "as institution names or employment gaps, can still correlate with protected characteristics in real data, and a proper "
-      "fairness audit would need real, demographically annotated resumes that were not available to the team.")
-    p("Several defects were found and fixed only because the system was tested as a real web service rather than as a notebook. "
-      "A file-name fallback produced “Priya Sharma Resume” instead of “Priya Sharma” because an underscore is not a word boundary "
-      "in a regular expression; inline style attributes were blocked by the Content Security Policy and silently removed "
-      "spacing; the spreadsheet-injection guard in the CSV export altered phone numbers that begin with “+”; and the confusion "
-      "matrix headers were clipped on the insights page. Each was corrected and covered by a test or a browser check.")
+      "example the two Data Scientist resumes scored in the strong band (72.0 and 70.7), related roles in the partial band, and "
+      "unrelated roles below 30. Because every component is shown, a recruiter can see why a candidate ranked where they did, "
+      "for instance a missing Deep Learning skill, and can override the score. The related-skill rule and the role-affinity "
+      "measure were introduced because the first, stricter versions penalised near-misses that a human reader would forgive.")
+    p("Name-blind scoring was verified directly: replacing a resume's name and e-mail address leaves its score unchanged. This "
+      "removes one channel for bias but is not a fairness guarantee, because other fields such as institution names or "
+      "employment gaps can still correlate with protected characteristics; a proper audit needs real, demographically annotated "
+      "resumes that were not available to the team.")
+    p("Several defects were found only because the system was tested as a web service rather than a notebook: a file-name "
+      "fallback produced “Priya Sharma Resume” instead of “Priya Sharma”; inline style attributes blocked by the Content "
+      "Security Policy silently removed spacing; the CSV spreadsheet-injection guard altered phone numbers beginning with “+”; "
+      "and confusion-matrix headers were clipped. Each was corrected and covered by a test or a browser check.")
     sec("6.4", "Limitations")
     ul([f"The classifiers were trained on {M['n_samples']:,} synthetic resumes. The 99.8% hold-out accuracy shows that the pipeline "
-        "works and that the roles are separable in the generated data; it is not a real-world accuracy estimate, and real resumes "
-        "are expected to give lower and more variable results. The test suite contains five hand-written resumes as a modest "
-        "sanity check, not as a substitute for real evaluation.",
-        f"Skill, education and experience extraction is rule-based over a {NSK}-skill taxonomy; skills, phrasings and date formats "
-        "outside these rules are missed, and a trained named-entity model would be more robust.",
-        "Scanned or image-only resumes are rejected because there is no optical character recognition; very unusual layouts "
-        "(multi-column designs, text in images) can reduce extraction quality.",
+        "works and the roles are separable in the generated data; it is not a real-world accuracy estimate, and real resumes are "
+        "expected to give lower and more variable results. The five hand-written resumes are a modest sanity check, not a "
+        "substitute for real evaluation.",
+        f"Extraction is rule-based over a {NSK}-skill taxonomy; skills, phrasings and date formats outside the rules are missed, "
+        "and a trained named-entity model would be more robust.",
+        "Scanned or image-only resumes are rejected (no OCR), and unusual layouts such as multi-column designs can reduce "
+        "extraction quality.",
         "The score weights, the similarity ceiling (0.45), the affinity value (0.4) and the grade thresholds are design choices "
-        "made by the team and calibrated on the sample resumes, not parameters learned from recruiter decisions.",
+        "calibrated on the sample resumes, not parameters learned from recruiter decisions.",
         "The system supports twelve roles and English text only, keeps no database or user accounts, and is a decision aid that "
         "requires human review."])
 
