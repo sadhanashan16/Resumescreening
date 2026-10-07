@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_fields.html" import field %}
+{% block title %}Create your account{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card">
+    <h1>Create your account</h1>
+    <p class="muted">Free to use. Start screening resumes in under a minute.</p>
+    <form method="post" novalidate class="form" data-auth-form data-register>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {{ field(form.name, autocomplete="name", autofocus=True, placeholder="Alex Morgan") }}
+      {{ field(form.email, autocomplete="email", placeholder="you@company.com") }}
+      {{ field(form.password, autocomplete="new-password", password=True, hint="At least 8 characters, with a letter and a number.") }}
+      <div class="strength" id="pw-strength" aria-hidden="true"><span></span><span></span><span></span><span></span><em id="pw-strength-label"></em></div>
+      {{ field(form.confirm, autocomplete="new-password", password=True) }}
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Create account</button>
+    </form>
+    <p class="auth-alt">Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ static_v('js/auth.js') }}"></script>{% endblock %}

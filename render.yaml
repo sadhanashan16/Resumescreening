@@ -1,12 +1,30 @@
 # Render Blueprint: https://render.com/docs/blueprint-spec
+# Creates the web service (Docker) and its PostgreSQL database, and wires them together.
+databases:
+  - name: resumeiq-db
+    plan: free              # free Postgres expires after ~30 days; use basic-256mb or higher for a permanent site
+    region: oregon
+    databaseName: resumeiq
+    user: resumeiq
+
 services:
   - type: web
     name: resumeiq-resume-screening
     runtime: docker
     plan: free
-    region: oregon
+    region: oregon          # must match the database region
     healthCheckPath: /health
     autoDeploy: true
     envVars:
+      - key: APP_ENV
+        value: production
+      - key: SECRET_KEY     # generated once by Render and kept across deploys; never commit a real value
+        generateValue: true
+      - key: DATABASE_URL   # injected from the database above
+        fromDatabase:
+          name: resumeiq-db
+          property: connectionString
+      - key: REQUIRE_PERSISTENT_DB   # refuse to start without a real database instead of losing accounts
+        value: "true"
       - key: LOG_LEVEL
         value: INFO

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_fields.html" import field %}
+{% block title %}Log in{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card">
+    <h1>Welcome back</h1>
+    <p class="muted">Log in to screen resumes and manage your shortlist.</p>
+    <form method="post" novalidate class="form" data-auth-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      {{ field(form.email, autocomplete="email", autofocus=True, placeholder="you@company.com") }}
+      {{ field(form.password, autocomplete="current-password", password=True) }}
+      <label class="check"><input type="checkbox" name="remember" id="remember"{% if form.remember.data %} checked{% endif %}> Keep me signed in on this device</label>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Log in</button>
+    </form>
+    {% if allow_signup %}<p class="auth-alt">New to ResumeIQ? <a href="{{ url_for('auth.register') }}">Create a free account</a></p>{% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ static_v('js/auth.js') }}"></script>{% endblock %}

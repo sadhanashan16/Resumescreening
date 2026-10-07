@@ -1,0 +1,13 @@
+{# Form field with label, inline errors and an optional password reveal button. #}
+{% macro field(f, autocomplete=None, hint=None, autofocus=False, password=False, placeholder=None) -%}
+<div class="field{% if f.errors %} has-error{% endif %}">
+  <label for="{{ f.id }}">{{ f.label.text }}</label>
+  {% if password %}<div class="pw">{% endif %}
+  {{ f(class="input", autocomplete=autocomplete, placeholder=placeholder, autofocus=autofocus,
+       **{"aria-invalid": "true" if f.errors else "false", "aria-describedby": f.id ~ "-msg"}) }}
+  {% if password %}<button type="button" class="pw-toggle" data-pw-toggle="{{ f.id }}" aria-label="Show password" aria-pressed="false">Show</button></div>{% endif %}
+  <div class="field-msg{% if f.errors %} error{% endif %}" id="{{ f.id }}-msg">
+    {%- if f.errors %}{{ f.errors[0] }}{% elif hint %}{{ hint }}{% endif -%}
+  </div>
+</div>
+{%- endmacro %}

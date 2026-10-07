@@ -1,0 +1,36 @@
+{# Search / filter / sort toolbar + container used by the results and shortlist pages (driven by candidates.js). #}
+{% from "_icons.html" import icon %}
+<section class="cb" id="cb" aria-label="Candidates">
+  <div class="cb-toolbar">
+    <div class="search-field">
+      <span class="search-icon">{{ icon('search', 18) }}</span>
+      <label class="sr-only" for="cb-q">Search candidates</label>
+      <input class="input" type="search" id="cb-q" placeholder="Search name, skill, email or role…" autocomplete="off">
+    </div>
+    <label class="sr-only" for="cb-grade">Filter by match quality</label>
+    <select class="input" id="cb-grade">
+      <option value="all">All matches</option><option value="strong">Strong (70+)</option>
+      <option value="good">Good (50–69)</option><option value="partial">Partial (30–49)</option><option value="weak">Weak (&lt;30)</option>
+    </select>
+    <label class="sr-only" for="cb-sort">Sort candidates</label>
+    <select class="input" id="cb-sort">
+      <option value="score:desc">Score: high to low</option><option value="score:asc">Score: low to high</option>
+      <option value="rank:asc">AI rank</option><option value="name:asc">Name A–Z</option>
+      <option value="experience:desc">Most experience</option><option value="recent:desc">Newest first</option>
+    </select>
+    <div class="seg" id="cb-view" role="group" aria-label="View">
+      <button type="button" data-view="table" aria-pressed="true">Table</button>
+      <button type="button" data-view="cards" aria-pressed="false">Cards</button>
+    </div>
+  </div>
+  <div class="cb-tabs" id="cb-tabs" role="group" aria-label="Filter by status"></div>
+  <div class="cb-bulk" id="cb-bulk" hidden>
+    <strong id="cb-bulk-count">0 selected</strong>
+    <button type="button" class="btn btn-sm btn-primary" data-bulk="shortlisted">{{ icon('star', 16) }} Shortlist</button>
+    <button type="button" class="btn btn-sm" data-bulk="rejected">{{ icon('ban', 16) }} Reject</button>
+    <button type="button" class="btn btn-sm btn-ghost" data-bulk="pending">{{ icon('undo', 16) }} Reset</button>
+    <button type="button" class="btn btn-sm btn-ghost" id="cb-clear-sel">Clear</button>
+  </div>
+  <div id="cb-list" aria-live="polite"></div>
+  <nav class="pager" id="cb-pager" aria-label="Pagination" hidden></nav>
+</section>

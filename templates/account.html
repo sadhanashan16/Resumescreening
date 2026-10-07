@@ -1,0 +1,51 @@
+{% extends "app_base.html" %}
+{% from "_fields.html" import field %}
+{% block title %}Account{% endblock %}
+{% block page_title %}Account{% endblock %}
+{% block content %}
+<div class="page-intro">
+  <h1>Your account</h1>
+  <p class="muted">Manage your profile, password and data.</p>
+</div>
+
+<div class="account-grid">
+  <section class="card">
+    <h2>Profile</h2>
+    <dl class="profile">
+      <div><dt>Name</dt><dd>{{ current_user.name }}</dd></div>
+      <div><dt>Email</dt><dd>{{ current_user.email }}</dd></div>
+      <div><dt>Member since</dt><dd class="js-date" data-iso="{{ current_user.created_at.isoformat(timespec='seconds') }}Z">{{ current_user.created_at.strftime('%Y-%m-%d') }}</dd></div>
+    </dl>
+    <div class="stat-inline">
+      <div><b>{{ stats.screenings }}</b><span>Screenings</span></div>
+      <div><b>{{ stats.candidates }}</b><span>Candidates</span></div>
+      <div><b>{{ stats.shortlisted }}</b><span>Shortlisted</span></div>
+    </div>
+    <p class="muted small">Resume files are never stored. We keep the details extracted from them (name, contact details, skills, education, experience) and their scores so you can manage your shortlist.</p>
+  </section>
+
+  <section class="card">
+    <h2>Change password</h2>
+    <form method="post" action="{{ url_for('auth.change_password') }}" novalidate class="form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {{ field(password_form.current_password, autocomplete="current-password", password=True) }}
+      {{ field(password_form.new_password, autocomplete="new-password", password=True, hint="At least 8 characters, with a letter and a number.") }}
+      {{ field(password_form.confirm, autocomplete="new-password", password=True) }}
+      <button type="submit" class="btn btn-primary">Update password</button>
+      <p class="muted small">Changing your password signs you out on every other device.</p>
+    </form>
+  </section>
+
+  <section class="card danger-zone">
+    <h2>Delete account</h2>
+    <p class="muted">Permanently delete your account together with all screenings, candidates, shortlists and notes. This cannot be undone.</p>
+    <form method="post" action="{{ url_for('auth.delete_account') }}" novalidate class="form"
+          data-confirm="Delete your account and ALL of your data permanently?">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {{ field(delete_form.password, autocomplete="current-password", password=True) }}
+      <button type="submit" class="btn btn-danger">Delete my account</button>
+    </form>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ static_v('js/auth.js') }}"></script><script src="{{ static_v('js/dashboard.js') }}"></script>{% endblock %}

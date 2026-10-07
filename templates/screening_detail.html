@@ -1,0 +1,47 @@
+{% extends "app_base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ s.job_title }}{% endblock %}
+{% block page_title %}<a class="crumb" href="{{ url_for('main.screenings') }}">Screenings</a> / {{ s.job_title|truncate(40) }}{% endblock %}
+{% block content %}
+<div class="page-intro split">
+  <div>
+    <h1>{{ s.job_title }}</h1>
+    <p class="muted"><span class="js-date" data-iso="{{ summary.created_at }}">{{ summary.created_at[:10] }}</span> · {{ s.total }} resume{{ '' if s.total == 1 else 's' }} analysed · AI recommends the top {{ s.top_n }}</p>
+  </div>
+  <div class="page-actions">
+    <button type="button" class="btn btn-primary" id="shortlist-recommended" data-screening="{{ s.id }}">{{ icon('star', 18) }} Shortlist AI top {{ s.top_n }}</button>
+    <a class="btn" id="export-link" href="{{ url_for('api.export_screening', screening_id=s.id) }}">{{ icon('download', 18) }} Export CSV</a>
+    <form method="post" action="{{ url_for('main.screening_delete', screening_id=s.id) }}" class="inline-form"
+          data-confirm="Delete this screening and all of its candidates (including any shortlisted)? This cannot be undone.">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-danger-ghost" type="submit">{{ icon('trash', 18) }} Delete</button>
+    </form>
+  </div>
+</div>
+
+<section class="card job-card">
+  <div class="job-meta">
+    {% if job.predicted_role %}<span class="chip">Detected role: {{ job.predicted_role.title }} ({{ (job.predicted_role.confidence * 100)|round|int }}%)</span>{% endif %}
+    <span class="muted small">{{ job.min_years ~ '+ years experience' if job.min_years else 'No experience requirement found' }} ·
+      {{ {1:'High school',2:'Diploma',3:"Bachelor's",4:"Master's",5:'Doctorate'}[job.education_level] ~ ' required' if job.education_level else 'No education requirement found' }}</span>
+  </div>
+  {% if job.skills %}
+  <div class="label-row">Skills extracted from the job description</div>
+  <div class="chips">{% for k in job.skills %}<span class="chip tech">{{ k }}</span>{% endfor %}</div>
+  {% else %}
+  <div class="alert warn">No known skills were found in the job description, so ranking relies on text similarity only. Try listing specific skills next time.</div>
+  {% endif %}
+</section>
+
+{% if errors %}
+<div class="alert warn"><strong>{{ errors|length }} file{{ '' if errors|length == 1 else 's' }} could not be read:</strong>
+  <ul>{% for e in errors %}<li>{{ e.filename }}: {{ e.error }}</li>{% endfor %}</ul></div>
+{% endif %}
+
+<div id="page-config" data-screening-id="{{ s.id }}" data-default-status="all" data-top-n="{{ s.top_n }}" hidden></div>
+{% include "_candidate_browser.html" %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ static_v('js/candidates.js') }}"></script>
+<script src="{{ static_v('js/dashboard.js') }}"></script>
+{% endblock %}

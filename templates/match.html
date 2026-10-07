@@ -1,5 +1,6 @@
-{% extends "base.html" %}
-{% block title %}Find job match{% endblock %}
+{% extends "app_base.html" %}
+{% block title %}Job match{% endblock %}
+{% block page_title %}Job match{% endblock %}
 {% block content %}
 <div class="page-head">
   <h1>Find your best job match</h1>
@@ -28,4 +29,4 @@
 </form>
 <section class="results" id="results" aria-live="polite" hidden></section>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='js/match.js') }}"></script>{% endblock %}
+{% block scripts %}<script src="{{ static_v('js/match.js') }}"></script>{% endblock %}

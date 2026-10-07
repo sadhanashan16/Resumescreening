@@ -1,0 +1,90 @@
+{% extends "app_base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block actions %}<a class="btn btn-primary btn-sm" href="{{ url_for('main.screening_new') }}">{{ icon('plus', 18) }} New screening</a>{% endblock %}
+{% block content %}
+<div class="page-intro">
+  <h1>Welcome back, {{ current_user.name.split()[0] }}</h1>
+  <p class="muted">Screen resumes against a job description, review the AI-ranked candidates and build your shortlist.</p>
+</div>
+
+<section class="stat-grid" aria-label="Overview">
+  <div class="stat-card"><span class="stat-icon">{{ icon('files') }}</span><b>{{ n_screenings }}</b><span>Screenings</span></div>
+  <div class="stat-card"><span class="stat-icon">{{ icon('users') }}</span><b>{{ total_candidates }}</b><span>Candidates screened</span></div>
+  <div class="stat-card accent"><span class="stat-icon">{{ icon('star') }}</span><b>{{ by_status.shortlisted }}</b><span>Shortlisted</span></div>
+  <div class="stat-card"><span class="stat-icon">{{ icon('chart') }}</span><b>{{ avg_score if avg_score is not none else '–' }}</b><span>Average match score</span></div>
+</section>
+
+{% if n_screenings == 0 %}
+<section class="card onboarding">
+  <h2>Get started in four steps</h2>
+  <ol class="steps-list">
+    <li class="done"><span class="n">{{ icon('check', 16) }}</span><div><strong>Create your account</strong><p class="muted small">Done. You're logged in.</p></div></li>
+    <li><span class="n">2</span><div><strong>Run your first screening</strong><p class="muted small">Paste a job description and upload resumes (PDF, DOC, DOCX or TXT). No resumes handy? Tick “include sample resumes”.</p></div></li>
+    <li><span class="n">3</span><div><strong>Review the ranked results</strong><p class="muted small">See each candidate's match score, skills, experience and the reasons behind the ranking.</p></div></li>
+    <li><span class="n">4</span><div><strong>Shortlist and manage candidates</strong><p class="muted small">Shortlist the best fits, add notes, and export the list as CSV.</p></div></li>
+  </ol>
+  <a class="btn btn-primary" href="{{ url_for('main.screening_new') }}">Start your first screening</a>
+</section>
+{% else %}
+<div class="dash-grid">
+  <section class="card">
+    <div class="card-head"><h2>Recent screenings</h2><a href="{{ url_for('main.screenings') }}">View all</a></div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Job</th><th class="num">Resumes</th><th class="num">Shortlisted</th><th class="num">Top score</th><th></th></tr></thead>
+        <tbody>
+        {% for s in recent %}
+          <tr>
+            <td data-label="Job"><a class="row-title" href="{{ s.url }}">{{ s.job_title }}</a><small class="muted block js-date" data-iso="{{ s.created_at }}">{{ s.created_at[:10] }}</small></td>
+            <td class="num" data-label="Resumes">{{ s.total }}</td>
+            <td class="num" data-label="Shortlisted">{{ s.shortlisted }}</td>
+            <td class="num" data-label="Top score">{{ s.top_score if s.top_score is not none else '–' }}</td>
+            <td class="num"><a class="btn btn-sm" href="{{ s.url }}">Open</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Pipeline</h2></div>
+    {% set total = total_candidates or 1 %}
+    <div class="pipeline" role="img" aria-label="{{ by_status.shortlisted }} shortlisted, {{ by_status.pending }} pending, {{ by_status.rejected }} rejected">
+      <span class="seg-shortlisted" data-w="{{ (by_status.shortlisted / total * 100)|round(1) }}"></span>
+      <span class="seg-pending" data-w="{{ (by_status.pending / total * 100)|round(1) }}"></span>
+      <span class="seg-rejected" data-w="{{ (by_status.rejected / total * 100)|round(1) }}"></span>
+    </div>
+    <ul class="legend">
+      <li><i class="dot shortlisted"></i> Shortlisted <b>{{ by_status.shortlisted }}</b></li>
+      <li><i class="dot pending"></i> To review <b>{{ by_status.pending }}</b></li>
+      <li><i class="dot rejected"></i> Rejected <b>{{ by_status.rejected }}</b></li>
+    </ul>
+    <h3 class="mt">Match quality</h3>
+    {% for label, n in grades.items() %}
+    <div class="bar"><span>{{ label.replace(' match', '') }}</span><div class="track"><div class="fill g-{{ loop.index }}" data-w="{{ (n / total * 100)|round(1) }}"></div></div><span class="val">{{ n }}</span></div>
+    {% endfor %}
+  </section>
+</div>
+
+<section class="card">
+  <div class="card-head"><h2>Latest shortlisted candidates</h2><a href="{{ url_for('main.shortlist') }}">Manage shortlist</a></div>
+  {% if shortlisted %}
+  <ul class="mini-list">
+    {% for c in shortlisted %}
+    <li>
+      <span class="avatar sm" aria-hidden="true">{{ c.name.split()[0][:1] }}{{ c.name.split()[1][:1] if c.name.split()|length > 1 else '' }}</span>
+      <div class="grow"><strong>{{ c.name }}</strong><small class="muted block">{{ c.screening_title }}</small></div>
+      <span class="score-pill {{ 'g-strong' if c.score >= 70 else 'g-good' if c.score >= 50 else 'g-partial' if c.score >= 30 else 'g-weak' }}">{{ '%.1f'|format(c.score) }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="empty small-empty"><p class="muted">No one is shortlisted yet. Open a screening and shortlist the candidates you like.</p></div>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{{ static_v('js/dashboard.js') }}"></script>{% endblock %}

@@ -1,0 +1,56 @@
+{% from "_icons.html" import icon %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Dashboard{% endblock %} · ResumeIQ</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="robots" content="noindex">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ static_v('style.css') }}">
+</head>
+<body class="app">
+<a class="skip-link" href="#main">Skip to content</a>
+{% set ep = request.endpoint %}
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar" aria-label="Primary">
+    <a class="brand" href="{{ url_for('main.dashboard') }}"><span class="brand-mark">R</span> ResumeIQ</a>
+    <nav class="side-nav">
+      <a href="{{ url_for('main.dashboard') }}" {% if ep == 'main.dashboard' %}aria-current="page"{% endif %}>{{ icon('home') }} Dashboard</a>
+      <a href="{{ url_for('main.screening_new') }}" {% if ep == 'main.screening_new' %}aria-current="page"{% endif %}>{{ icon('plus') }} New screening</a>
+      <a href="{{ url_for('main.screenings') }}" {% if ep in ('main.screenings', 'main.screening_detail') %}aria-current="page"{% endif %}>{{ icon('files') }} Screenings</a>
+      <a href="{{ url_for('main.shortlist') }}" {% if ep == 'main.shortlist' %}aria-current="page"{% endif %}>{{ icon('star') }} Shortlist</a>
+      <div class="side-label">Tools</div>
+      <a href="{{ url_for('main.match') }}" {% if ep == 'main.match' %}aria-current="page"{% endif %}>{{ icon('target') }} Job match</a>
+      <a href="{{ url_for('main.insights') }}" {% if ep == 'main.insights' %}aria-current="page"{% endif %}>{{ icon('chart') }} Model insights</a>
+    </nav>
+    <div class="side-foot">
+      <a class="user-card" href="{{ url_for('auth.account') }}" {% if ep == 'auth.account' %}aria-current="page"{% endif %}>
+        <span class="avatar" aria-hidden="true">{{ current_user.initials }}</span>
+        <span class="user-meta"><strong>{{ current_user.name }}</strong><small>{{ current_user.email }}</small></span>
+      </a>
+      <form method="post" action="{{ url_for('auth.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-block btn-ghost">{{ icon('logout', 18) }} Log out</button>
+      </form>
+    </div>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+
+  <div class="app-main">
+    <header class="topbar">
+      <button type="button" class="icon-btn menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">{{ icon('menu', 22) }}</button>
+      <div class="topbar-title">{% block page_title %}{% endblock %}</div>
+      <div class="topbar-actions">{% block actions %}{% endblock %}</div>
+    </header>
+    {% include "_flash.html" %}
+    <main id="main" class="app-content">{% block content %}{% endblock %}</main>
+  </div>
+</div>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<script src="{{ static_v('js/common.js') }}"></script>
+<script src="{{ static_v('js/nav.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,4 +1,8 @@
-"""Capture the UI screenshots used as figures in the report (needs the app on :8765)."""
+"""Capture the UI screenshots used as figures in the report (needs the app on :8765).
+
+NOTE: written for the pre-accounts UI. The app now requires a login, so re-running this needs a sign-in step first;
+the committed report figures are unaffected.
+"""
 from pathlib import Path
 from PIL import Image
 from playwright.sync_api import sync_playwright

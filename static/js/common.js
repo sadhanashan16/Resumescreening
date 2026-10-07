@@ -1,4 +1,4 @@
-/* Shared helpers. All dynamic content is built with textContent (never innerHTML). */
+/* Shared helpers. All dynamic content is built with textContent / DOM nodes (never innerHTML). */
 "use strict";
 
 function h(tag, attrs, ...children) {
@@ -14,6 +14,13 @@ function h(tag, attrs, ...children) {
     if (c === null || c === undefined || c === false) continue;
     node.append(c.nodeType ? c : document.createTextNode(String(c)));
   }
+  return node;
+}
+
+function svg(tag, attrs, ...children) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs || {})) if (v !== null && v !== undefined) node.setAttribute(k, v);
+  for (const c of children.flat()) if (c) node.append(c);
   return node;
 }
 
@@ -33,12 +40,51 @@ function gradeClass(grade) {
 
 function formatBytes(n) { return n < 1024 * 1024 ? Math.max(1, Math.round(n / 1024)) + " KB" : (n / 1048576).toFixed(1) + " MB"; }
 
-async function postForm(url, formData) {
-  const resp = await fetch(url, { method: "POST", body: formData });
+function fmtDate(iso, withTime) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) +
+    (withTime ? " · " + d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }) : "");
+}
+
+function initials(name) {
+  const parts = String(name || "?").trim().split(/\s+/).filter(Boolean);
+  return (parts.slice(0, 2).map((p) => p[0]).join("") || "?").toUpperCase();
+}
+
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+/* ---- network: every state-changing request carries the CSRF token ---- */
+function csrfToken() {
+  const m = document.querySelector('meta[name="csrf-token"]');
+  return m ? m.content : "";
+}
+
+async function readJson(resp) {
   let data = null;
-  try { data = await resp.json(); } catch (_) { /* non-JSON error body */ }
+  try { data = await resp.json(); } catch (_) { /* non-JSON body */ }
+  if (resp.status === 401) {                       // session expired: go back to the login page
+    const here = location.pathname + location.search;
+    location.assign("/login?next=" + encodeURIComponent(here));
+    throw new Error("Your session has expired. Please log in again.");
+  }
   if (!resp.ok) throw new Error((data && data.error) || `Request failed (${resp.status}).`);
   return data;
+}
+
+async function postForm(url, formData) {
+  return readJson(await fetch(url, { method: "POST", body: formData, headers: { "X-CSRFToken": csrfToken() },
+                                     credentials: "same-origin" }));
+}
+
+async function api(method, url, body) {
+  const opts = { method, credentials: "same-origin", headers: { "X-CSRFToken": csrfToken() } };
+  if (body !== undefined) { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
+  return readJson(await fetch(url, opts));
 }
 
 function showError(box, message) { box.textContent = message; box.hidden = !message; }
@@ -48,6 +94,14 @@ function setBusy(btn, busy, idleText) {
   btn.textContent = "";
   if (busy) btn.append(h("span", { class: "spinner", "aria-hidden": "true" }), " Analysing…");
   else btn.textContent = idleText;
+}
+
+function toast(message, kind) {
+  let box = document.getElementById("toasts");
+  if (!box) { box = h("div", { id: "toasts", class: "toasts", "aria-live": "polite" }); document.body.append(box); }
+  const t = h("div", { class: "toast " + (kind || "info"), role: kind === "error" ? "alert" : "status" }, message);
+  box.append(t);
+  setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 300); }, kind === "error" ? 6000 : 3200);
 }
 
 /* Drag-and-drop zone that fills a file list. Returns {files(), clear()}. */
@@ -73,20 +127,6 @@ function setupDropzone({ zone, input, list, multiple, maxFiles, onChange }) {
   return { files: () => files, clear: () => { files = []; render(); } };
 }
 
-function csvCell(v) {
-  let s = v === null || v === undefined ? "" : String(v);
-  // neutralise spreadsheet formula injection (but keep phone numbers like +44 7... intact)
-  if (/^[=@\t\r]|^[+\-][^\d\s(]/.test(s)) s = "'" + s;
-  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-}
-
-function downloadCsv(filename, rows) {
-  const blob = new Blob([rows.map((r) => r.map(csvCell).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" });
-  const a = h("a", { href: URL.createObjectURL(blob), download: filename });
-  document.body.append(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-}
-
 function skillBlock(matched, related, missing) {
   const out = [];
   if (matched && matched.length) out.push(h("div", { class: "label-row", text: "Matched skills" }), chips(matched, "good"));
@@ -95,3 +135,9 @@ function skillBlock(matched, related, missing) {
   if (missing && missing.length) out.push(h("div", { class: "label-row", text: "Missing skills" }), chips(missing, "bad"));
   return out;
 }
+
+/* Forms with data-confirm="message" ask before submitting (delete buttons). */
+document.addEventListener("submit", (e) => {
+  const msg = e.target.dataset && e.target.dataset.confirm;
+  if (msg && !window.confirm(msg)) e.preventDefault();
+});

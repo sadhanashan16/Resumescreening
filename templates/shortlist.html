@@ -1,0 +1,23 @@
+{% extends "app_base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Shortlist{% endblock %}
+{% block page_title %}Shortlist{% endblock %}
+{% block content %}
+<div class="page-intro split">
+  <div>
+    <h1>Shortlisted candidates</h1>
+    <p class="muted">Everyone you've shortlisted across all screenings. Add notes, track decisions, and export the list.</p>
+  </div>
+  <div class="page-actions">
+    <label class="sr-only" for="cb-run">Filter by screening</label>
+    <select class="input" id="cb-run">
+      <option value="">All screenings</option>
+      {% for r in runs %}<option value="{{ r.id }}">{{ r.title }}</option>{% endfor %}
+    </select>
+    <a class="btn" id="export-link" href="{{ url_for('api.export_candidates', status='shortlisted') }}">{{ icon('download', 18) }} Export CSV</a>
+  </div>
+</div>
+<div id="page-config" data-default-status="shortlisted" data-shortlist-page="1" hidden></div>
+{% include "_candidate_browser.html" %}
+{% endblock %}
+{% block scripts %}<script src="{{ static_v('js/candidates.js') }}"></script>{% endblock %}

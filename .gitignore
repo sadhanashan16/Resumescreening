@@ -8,3 +8,7 @@ models/
 .env
 .DS_Store
 report/report.html
+instance/
+.env
+*.db
+*.sqlite3

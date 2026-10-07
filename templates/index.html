@@ -1,13 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% from "_icons.html" import icon %}
+{% block title %}AI resume screening and shortlisting{% endblock %}
 {% block content %}
 <section class="hero">
   <span class="eyebrow">Machine-learning powered recruitment</span>
   <h1>Screen hundreds of resumes in <span>seconds</span>, not days</h1>
-  <p class="lead">Upload resumes, paste a job description, and get a ranked, explainable shortlist. Or upload one resume and discover which job roles fit best. Built with TF-IDF, Naive Bayes and SVM.</p>
+  <p class="lead">Upload resumes, paste a job description, and get a ranked, explainable shortlist, then track your decisions in one place. Built on TF-IDF, Naive Bayes and SVM models.</p>
   <div class="cta">
-    <a class="btn btn-primary" href="{{ url_for('screen_page') }}">Screen candidates →</a>
-    <a class="btn" href="{{ url_for('match_page') }}">Find my best job match</a>
+    {% if current_user.is_authenticated %}
+    <a class="btn btn-primary btn-lg" href="{{ url_for('main.dashboard') }}">Go to your dashboard →</a>
+    <a class="btn btn-lg" href="{{ url_for('main.screening_new') }}">New screening</a>
+    {% else %}
+    {% if allow_signup %}<a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}">Get started free →</a>{% endif %}
+    <a class="btn btn-lg" href="{{ url_for('auth.login') }}">Log in</a>
+    {% endif %}
   </div>
 </section>
 
@@ -16,37 +22,37 @@
     <div class="stat"><b>{{ roles|length }}</b>job roles modelled</div>
     <div class="stat"><b>{{ n_skills }}</b>skills recognised</div>
     <div class="stat"><b>3</b>ML models (TF-IDF · NB · SVM)</div>
-    <div class="stat"><b>{{ metrics.n_samples if metrics else '–' }}</b>training resumes</div>
+    <div class="stat"><b>{{ '{:,}'.format(metrics.n_samples) if metrics else '–' }}</b>training resumes</div>
   </div>
 </section>
 
-<section class="block">
-  <h2>How it works</h2>
+<section class="block" id="how">
+  <h2>From sign-up to shortlist</h2>
   <div class="steps">
-    <div class="step"><h3>Upload</h3><p class="muted small">PDF, DOC, DOCX or TXT resumes. Text is extracted in memory.</p></div>
-    <div class="step"><h3>Extract (NLP)</h3><p class="muted small">Skills, education, experience and contact details are pulled from the text.</p></div>
-    <div class="step"><h3>Vectorise</h3><p class="muted small">Resumes and the job description become TF-IDF vectors (unigrams + bigrams).</p></div>
-    <div class="step"><h3>Classify &amp; rank</h3><p class="muted small">Naive Bayes and SVM predict the role; cosine similarity and skill coverage rank fit.</p></div>
-    <div class="step"><h3>Shortlist</h3><p class="muted small">Top candidates with reasons: matched, related and missing skills. Export to CSV.</p></div>
+    <div class="step"><h3>Create an account</h3><p class="muted small">Sign up free and log in securely. Your screenings and shortlists are private to you.</p></div>
+    <div class="step"><h3>Upload resumes</h3><p class="muted small">PDF, DOC, DOCX or TXT, one or many, plus the job description.</p></div>
+    <div class="step"><h3>AI screening</h3><p class="muted small">Skills, education and experience are extracted, then every resume is scored and ranked.</p></div>
+    <div class="step"><h3>Review results</h3><p class="muted small">Search, filter and sort candidates. See matched, related and missing skills.</p></div>
+    <div class="step"><h3>Shortlist &amp; manage</h3><p class="muted small">Shortlist the best fits, add notes, export to CSV, and log out when you're done.</p></div>
   </div>
 </section>
 
-<section class="block">
-  <h2>What you can do</h2>
+<section class="block" id="features">
+  <h2>What you get</h2>
   <div class="grid grid-3">
-    <div class="card"><h3><span class="icon">👥</span> For recruiters</h3><p class="muted">Rank a whole batch of resumes against a job description and get a top-N shortlist with a transparent score breakdown.</p><a href="{{ url_for('screen_page') }}">Open the screener →</a></div>
-    <div class="card"><h3><span class="icon">🎯</span> For candidates</h3><p class="muted">Upload one resume and see which of {{ roles|length }} roles you match best, and which skills to learn to close the gap.</p><a href="{{ url_for('match_page') }}">Find my match →</a></div>
-    <div class="card"><h3><span class="icon">🔍</span> Explainable</h3><p class="muted">Every score shows its components: text similarity, skill coverage, role fit, experience and education.</p><a href="{{ url_for('insights_page') }}">See model insights →</a></div>
-    <div class="card"><h3><span class="icon">⚖️</span> Bias-aware</h3><p class="muted">Names, e-mails and phone numbers are stripped before scoring so they cannot influence the ranking.</p></div>
-    <div class="card"><h3><span class="icon">🔒</span> Private</h3><p class="muted">Files are processed in memory and discarded after the request. Nothing is stored on the server.</p></div>
-    <div class="card"><h3><span class="icon">⚡</span> Fast</h3><p class="muted">Batch up to 30 resumes per run. Try it instantly with the built-in sample resumes ({{ n_samples }} included).</p></div>
+    <div class="card"><h3><span class="icon-chip">{{ icon('users') }}</span> Built for recruiters</h3><p class="muted">Rank a whole batch of resumes against a job description, with a transparent score breakdown for every candidate.</p></div>
+    <div class="card"><h3><span class="icon-chip">{{ icon('star') }}</span> Shortlist management</h3><p class="muted">Shortlist or reject candidates, keep notes, and filter across all your screenings. Export the shortlist any time.</p></div>
+    <div class="card"><h3><span class="icon-chip">{{ icon('target') }}</span> Job-role matching</h3><p class="muted">Upload a single resume and see which of {{ roles|length }} roles it fits best, and which skills to learn.</p></div>
+    <div class="card"><h3><span class="icon-chip">{{ icon('eye') }}</span> Explainable scores</h3><p class="muted">Text similarity, skill coverage, role fit, experience and education: every part of the score is visible.</p></div>
+    <div class="card"><h3><span class="icon-chip">{{ icon('check') }}</span> Bias-aware</h3><p class="muted">Names, e-mails and phone numbers are stripped before scoring so they cannot influence the ranking.</p></div>
+    <div class="card"><h3><span class="icon-chip">{{ icon('trash') }}</span> You own your data</h3><p class="muted">Resume files are never stored. Delete any screening, or your whole account, whenever you like.</p></div>
   </div>
 </section>
 
 <section class="block">
   <h2>Tech stack</h2>
   <div class="chips">
-    {% for t in ['Python', 'Flask', 'Scikit-learn', 'TF-IDF', 'Naive Bayes', 'Linear SVM', 'Pandas', 'NumPy', 'pypdf', 'python-docx', 'Gunicorn', 'Docker', 'Render'] %}<span class="chip tech">{{ t }}</span>{% endfor %}
+    {% for t in ['Python', 'Flask', 'Scikit-learn', 'TF-IDF', 'Naive Bayes', 'Linear SVM', 'PostgreSQL', 'SQLAlchemy', 'Pandas', 'NumPy', 'pypdf', 'python-docx', 'Gunicorn', 'Docker', 'Render'] %}<span class="chip tech">{{ t }}</span>{% endfor %}
   </div>
 </section>
 {% endblock %}

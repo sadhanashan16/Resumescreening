@@ -5,6 +5,18 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: resumeiq
+          POSTGRES_PASSWORD: resumeiq
+          POSTGRES_DB: resumeiq_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U resumeiq" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      SECRET_KEY: ci-only-secret-key-not-used-anywhere-else
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -14,13 +26,23 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y antiword
       - run: pip install -r requirements-dev.txt
       - run: python -m resume_screening.train
-      - run: pytest -q
+      - name: Tests on SQLite
+        run: pytest -q
+      - name: Tests on PostgreSQL
+        run: pytest -q
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg2://resumeiq:resumeiq@localhost:5432/resumeiq_test
   docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t resumeiq .
-      - run: |
-          docker run -d -p 10000:10000 --name app resumeiq
-          for i in $(seq 1 30); do curl -sf localhost:10000/health && exit 0; sleep 2; done
+      - name: Boot the container against a throwaway Postgres and check /health
+        run: |
+          docker network create ci
+          docker run -d --network ci --name db -e POSTGRES_PASSWORD=pw -e POSTGRES_DB=app postgres:16
+          sleep 8
+          docker run -d --network ci --name app -p 10000:10000 -e APP_ENV=production -e SECRET_KEY=ci-secret-key-ci-secret-key-ci \
+            -e DATABASE_URL=postgresql://postgres:pw@db:5432/app resumeiq
+          for i in $(seq 1 40); do curl -sf localhost:10000/health && exit 0; sleep 3; done
           docker logs app; exit 1

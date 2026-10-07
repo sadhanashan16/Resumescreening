@@ -1,5 +1,6 @@
-{% extends "base.html" %}
+{% extends "app_base.html" %}
 {% block title %}Model insights{% endblock %}
+{% block page_title %}Model insights{% endblock %}
 {% block content %}
 <div class="page-head">
   <h1>Model insights</h1>
@@ -65,4 +66,4 @@
 <script id="metrics-data" type="application/json">{{ metrics|tojson }}</script>
 {% endif %}
 {% endblock %}
-{% block scripts %}{% if metrics %}<script src="{{ url_for('static', filename='js/insights.js') }}"></script>{% endif %}{% endblock %}
+{% block scripts %}{% if metrics %}<script src="{{ static_v('js/insights.js') }}"></script>{% endif %}{% endblock %}

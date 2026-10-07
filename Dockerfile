@@ -19,8 +19,8 @@ COPY . .
 # deployed model is reproducible (deterministic seed).
 RUN python -m resume_screening.train
 
-RUN useradd --create-home appuser && chown -R appuser /app
+RUN useradd --create-home appuser && chown -R appuser /app && chmod +x /app/start.sh
 USER appuser
 
-# Render injects $PORT. One worker (the model is held in memory) + threads fits the 512 MB free tier.
-CMD gunicorn app:app --bind 0.0.0.0:${PORT:-10000} --workers 1 --threads 4 --timeout 120 --access-logfile -
+# Render injects $PORT, SECRET_KEY and DATABASE_URL (see render.yaml). start.sh runs migrations, then gunicorn.
+CMD ["./start.sh"]

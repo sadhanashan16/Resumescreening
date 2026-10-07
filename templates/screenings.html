@@ -1,0 +1,66 @@
+{% extends "app_base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Screenings{% endblock %}
+{% block page_title %}Screenings{% endblock %}
+{% block actions %}<a class="btn btn-primary btn-sm" href="{{ url_for('main.screening_new') }}">{{ icon('plus', 18) }} New screening</a>{% endblock %}
+{% block content %}
+<div class="page-intro">
+  <h1>Your screenings</h1>
+  <p class="muted">Every screening you've run, newest first. Open one to review and shortlist its candidates.</p>
+</div>
+
+<form method="get" class="searchbar" role="search">
+  <label class="sr-only" for="q">Search screenings</label>
+  <span class="search-icon">{{ icon('search', 18) }}</span>
+  <input class="input" type="search" id="q" name="q" value="{{ q }}" placeholder="Search by job title…">
+  <button class="btn" type="submit">Search</button>
+  {% if q %}<a class="btn btn-ghost" href="{{ url_for('main.screenings') }}">Clear</a>{% endif %}
+</form>
+
+{% if items %}
+<section class="card flush">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Job</th><th class="num">Resumes</th><th class="num">Shortlisted</th><th class="num">Top score</th><th class="num">Avg score</th><th>Run</th><th></th></tr></thead>
+      <tbody>
+      {% for s in items %}
+        <tr>
+          <td data-label="Job"><a class="row-title" href="{{ s.url }}">{{ s.job_title }}</a></td>
+          <td class="num" data-label="Resumes">{{ s.total }}</td>
+          <td class="num" data-label="Shortlisted">{{ s.shortlisted }}</td>
+          <td class="num" data-label="Top score">{{ s.top_score if s.top_score is not none else '–' }}</td>
+          <td class="num" data-label="Avg score">{{ s.avg_score if s.avg_score is not none else '–' }}</td>
+          <td data-label="Run"><span class="js-date" data-iso="{{ s.created_at }}">{{ s.created_at[:10] }}</span></td>
+          <td class="actions">
+            <a class="btn btn-sm" href="{{ s.url }}">{{ icon('eye', 16) }} Open</a>
+            <form method="post" action="{{ url_for('main.screening_delete', screening_id=s.id) }}" class="inline-form"
+                  data-confirm="Delete “{{ s.job_title }}” and all {{ s.total }} of its candidates (including any shortlisted)? This cannot be undone.">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-danger-ghost" type="submit" aria-label="Delete screening {{ s.job_title }}">{{ icon('trash', 16) }}</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% if page.pages > 1 %}
+<nav class="pager" aria-label="Pagination">
+  {% if page.has_prev %}<a class="btn btn-sm" href="{{ url_for('main.screenings', page=page.prev_num, q=q or None) }}">← Previous</a>{% endif %}
+  <span class="muted small">Page {{ page.page }} of {{ page.pages }}</span>
+  {% if page.has_next %}<a class="btn btn-sm" href="{{ url_for('main.screenings', page=page.next_num, q=q or None) }}">Next →</a>{% endif %}
+</nav>
+{% endif %}
+{% elif q %}
+<div class="empty card"><h2>No screenings match “{{ q }}”</h2><p class="muted">Try a different search term.</p><a class="btn" href="{{ url_for('main.screenings') }}">Clear search</a></div>
+{% else %}
+<div class="empty card">
+  <div class="empty-icon">{{ icon('files', 36) }}</div>
+  <h2>No screenings yet</h2>
+  <p class="muted">Upload resumes and a job description to rank candidates automatically.</p>
+  <a class="btn btn-primary" href="{{ url_for('main.screening_new') }}">Run your first screening</a>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{{ static_v('js/dashboard.js') }}"></script>{% endblock %}
