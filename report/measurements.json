@@ -1,0 +1,19 @@
+{
+ "screen14_median_s": 0.187,
+ "screen14_max_s": 0.281,
+ "candidate_list_median_ms": 5.7,
+ "dashboard_median_ms": 5.0,
+ "password_check_median_ms": 108.4,
+ "password_scheme": "scrypt:32768:8:1",
+ "process_rss_mb": 245.1,
+ "tests_by_file": {
+  "test_app.py": 11,
+  "test_auth.py": 21,
+  "test_config.py": 6,
+  "test_engine.py": 6,
+  "test_extractor.py": 9,
+  "test_screenings.py": 13,
+  "test_skills_parser.py": 12
+ },
+ "tests_total": 78
+}

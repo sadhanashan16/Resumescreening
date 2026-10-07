@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-TARGET = 28
-FIGS = ["ui_home", "ui_screen_form", "ui_screen_results", "ui_match_results", "ui_insights", "fig_architecture", "fig_pipeline", "fig_metrics", "fig_confusion", "fig_ranking", "fig_outcomes"]
+TARGET = 29
+FIGS = ["ui_register", "ui_screen_form", "ui_screening_detail", "ui_shortlist", "ui_match_results", "fig_architecture", "fig_pipeline", "fig_metrics", "fig_confusion", "fig_ranking", "fig_outcomes"]
 
 TRIAL = r'''
 import sys, json

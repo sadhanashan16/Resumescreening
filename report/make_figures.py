@@ -37,13 +37,34 @@ def html_to_png(html: str, path: Path, width: int, scale=2):
 
 # ---------------------------------------------------------------- Figure 4.1
 def architecture():
-    spec = importlib.util.spec_from_file_location("poster_build", ROOT / "poster" / "build_poster.py")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    svg = mod.architecture_svg()
-    html = (f"<html><body style='margin:0;background:#fff'><div style='width:1100px;padding:18px;background:#fff;"
-            f"font-family:\"Liberation Sans\",Arial,sans-serif'>{svg}</div></body></html>")
-    html_to_png(html, FIG / "fig_architecture.png", 1140)
+    def box(t, sub, bg="#eaf3fb", bd="#1a6fc4", dark=False, flex=1):
+        tc, sc = ("#fff", "#d6ecff") if dark else ("#0b3a73", "#37506f")
+        return (f"<div style='flex:{flex};background:{bg};border:2.5px solid {bd};border-radius:12px;padding:10px 12px;text-align:center'>"
+                f"<div style='color:{tc};font-size:20px;font-weight:700;line-height:1.15'>{t}</div>"
+                f"<div style='font-size:15px;color:{sc};line-height:1.25;margin-top:3px'>{sub}</div></div>")
+    def row(*items, gap=14):
+        return f"<div style='display:flex;gap:{gap}px'>" + "".join(items) + "</div>"
+    amber, ab = "#fff6df", "#e0a100"
+    green, gb = "#e6f7ee", "#1f9d55"
+    arrow = "<div style='text-align:center;color:#19a7d6;font-size:26px;line-height:1.05;margin:2px 0'>&#8645;</div>"
+    cap = lambda t: f"<div style='text-align:center;font-size:14px;color:#37506f;margin:-2px 0 2px'>{t}</div>"
+    browser = row(box("Recruiter&rsquo;s browser", "HTML &middot; CSS &middot; JavaScript &middot; session cookie &middot; CSRF token", bg="#f1f4f8", bd="#8a97a8"))
+    app = ("<div style='border:3px solid #0b3a73;border-radius:16px;padding:10px 12px;background:#f7fbff'>"
+           "<div style='color:#0b3a73;font-weight:800;font-size:19px;text-align:center;margin-bottom:8px'>"
+           "Flask application &middot; Gunicorn (1 worker &times; 4 threads) &middot; Docker</div>"
+           + row(box("Security layer", "CSP &middot; HSTS &middot; CSRF<br>rate limits &middot; ProxyFix", bg="#fdeceb", bd="#c9534b"),
+                 box("Auth blueprint", "register &middot; login &middot; logout<br>Flask-Login &middot; scrypt", bg=amber, bd=ab),
+                 box("Pages", "dashboard &middot; screenings<br>shortlist &middot; match &middot; insights"),
+                 box("JSON API", "/api/screen &middot; /api/candidates<br>/api/match &middot; /health")) + "</div>")
+    lower = row(box("ML engine (resume_screening)", "extractor &rarr; parser &rarr; TF-IDF &rarr; Naive Bayes + SVM &rarr; five-part scorer<br>model.joblib loaded once at start-up", bg="#0b3a73", bd="#0b3a73", dark=True, flex=1.25),
+                box("Database", "SQLAlchemy + Alembic migrations<br>users &middot; screenings &middot; candidates", bg=green, bd=gb))
+    ops = row(box("Render", "web service + managed PostgreSQL<br>render.yaml blueprint &middot; generated SECRET_KEY", bg="#f1f4f8", bd="#8a97a8"),
+              box("GitHub Actions CI", "78 tests on SQLite and PostgreSQL<br>Docker image build", bg="#f1f4f8", bd="#8a97a8"))
+    html = ("<html><body style='margin:0;background:#fff'><div style='width:1040px;padding:16px;background:#fff;"
+            "font-family:\"Liberation Sans\",Arial,sans-serif'>"
+            + browser + cap("HTTPS requests &middot; JSON responses") + arrow + app + arrow
+            + lower + "<div style='height:10px'></div>" + ops + "</div></body></html>")
+    html_to_png(html, FIG / "fig_architecture.png", 1072)
 
 
 # ---------------------------------------------------------------- Figure 6.1
@@ -126,8 +147,8 @@ def outcomes():
     rows = [
         ("#3f6fa8", "TECHNICAL / ML COMPETENCY", ["Text classification with Naive Bayes and SVM", "TF-IDF features, cosine similarity, probability calibration", "Held-out and cross-validated evaluation"]),
         ("#3c8f5a", "PROBLEM FRAMING & ITERATION", ["Baseline, refinement and final approach (Chapter 4)", "Data too easy at first, so noise was added", "Role-fit and grade thresholds recalibrated"]),
-        ("#7a62a8", "TEAMWORK & DIVISION", ["ML / backend and UI / testing split, equal contribution", "Joint review of every milestone", "Reflections in Section 7.1"]),
-        ("#c9534b", "ENGINEERING RIGOUR BEYOND THE MODEL", ["34 automated tests, UI verified in a real browser", "Security headers and upload validation", "Docker image and Render blueprint"]),
+        ("#7a62a8", "TEAMWORK & DIVISION", ["ML / platform and UI / testing split, equal contribution", "Joint review of every milestone", "Reflections in Section 7.1"]),
+        ("#c9534b", "ENGINEERING RIGOUR BEYOND THE MODEL", ["78 automated tests, UI verified in a real browser", "Accounts, CSRF, rate limits, strict security headers", "PostgreSQL migrations, Docker image, Render blueprint"]),
         ("#c99a2e", "HONEST SELF-ASSESSMENT", ["Synthetic data stated openly (Chapter 6)", "99.8% is not a real-world accuracy figure", "Rule-based extraction and no OCR acknowledged"]),
     ]
     items = "".join(

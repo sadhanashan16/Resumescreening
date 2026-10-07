@@ -15,18 +15,23 @@ from docgen import Doc, data_uri  # noqa: E402
 from resume_screening import config, engine as eng_mod, text_utils, train as train_mod  # noqa: E402
 from resume_screening.catalog import ROLES  # noqa: E402
 from resume_screening.skills import SKILLS  # noqa: E402
+from webapp import auth as auth_mod  # noqa: E402
 
 FIG = ROOT / "report" / "figures"
 ASSETS = ROOT / "report" / "assets"
 M = json.loads(config.METRICS_PATH.read_text())
 LAT = json.loads((ROOT / "poster" / "assets" / "latency.json").read_text())
+MEAS = json.loads((ROOT / "report" / "measurements.json").read_text())
 RANK = json.loads((ROOT / "report" / "ranking_demo.json").read_text())
 
 TITLE = "ResumeIQ – AI-Based Resume Screening and Job Matching System"
 S1, R1 = "Sadhana Shanmugam", "2104251040837"
 S2, R2 = "Dhanya Sri Mohandass", "2104251040189"
 h, cv = M["holdout"], M["cross_validation"]
-LATENCY = f"{LAT['screen14_median_s'] + 1e-9:.2f}"
+LATENCY = f"{MEAS['screen14_median_s'] + 1e-9:.2f}"          # 14 resumes incl. extraction and saving to the database
+NTESTS = MEAS['tests_total']
+TF = MEAS['tests_by_file']
+RSS = f"{MEAS['process_rss_mb']:.0f}"
 N_CORRECT = sum(M["confusion_matrix"]["matrix"][i][i] for i in range(M["n_roles"]))
 NSK = len(SKILLS)
 
@@ -128,21 +133,25 @@ def acknowledgement() -> str:
 ABSTRACT = (
     "Recruiters routinely receive hundreds of resumes for a single vacancy, and screening them by hand is slow, inconsistent "
     "and prone to human error and bias, so qualified candidates can be overlooked. ResumeIQ is an AI-based resume analysis and "
-    "job-matching system that automates this first screening stage. Resumes in PDF, DOC, DOCX and TXT formats are converted to "
-    f"text, and a rule-based natural-language-processing layer extracts skills (from a {NSK}-skill taxonomy), education level, "
-    "years of experience and contact details. Names, e-mail addresses and phone numbers are removed before scoring so that they "
-    "cannot influence a ranking. The cleaned text is converted into TF-IDF vectors (unigrams and bigrams, "
-    f"{M['n_features']:,} features), classified into one of {M['n_roles']} job roles by a Multinomial Naive Bayes model and a "
-    "calibrated linear Support Vector Machine whose probabilities are averaged, and compared with a job description by cosine "
-    "similarity. A transparent five-part match score (text similarity 40%, skill coverage 30%, role fit 15%, experience "
-    "10% and education 5%) ranks the candidates and produces a top-N shortlist with matched, related and missing skills for "
-    "every candidate; the same engine also recommends the best-fit roles for a single resume. The system is delivered as a "
-    "Flask web application with a JSON API and is packaged with Docker and a Render blueprint. The models were trained on "
-    f"{M['n_samples']:,} synthetic resumes ({M['n_roles']} roles × 200) because real resumes are personal data. On a held-out "
-    f"test set of {M['n_test']} resumes the ensemble reached {h['ensemble']['accuracy'] * 100:.1f}% accuracy ({N_CORRECT}/{M['n_test']}), with "
-    f"5-fold cross-validation accuracy of {cv['naive_bayes']['accuracy'] * 100:.1f}% (Naive Bayes) and {cv['svm']['accuracy'] * 100:.1f}% (SVM); "
-    "all five hand-written resumes that the data generator never produced were matched to the correct role, and 14 sample "
-    f"resumes in four file formats were screened in a median of {LATENCY} s. Because the training data are synthetic, these figures "
+    "job-matching system that automates this first screening stage and lets a recruiter manage the outcome. Resumes in PDF, "
+    f"DOC, DOCX and TXT formats are converted to text, and a rule-based natural-language-processing layer extracts skills (from a "
+    f"{NSK}-skill taxonomy), education level, years of experience and contact details. Names, e-mail addresses and phone numbers "
+    "are removed before scoring so that they cannot influence a ranking. The cleaned text is converted into TF-IDF vectors "
+    f"(unigrams and bigrams, {M['n_features']:,} features), classified into one of {M['n_roles']} job roles by a Multinomial "
+    "Naive Bayes model and a calibrated linear Support Vector Machine whose probabilities are averaged, and compared with a job "
+    "description by cosine similarity. A transparent five-part match score (text similarity 40%, skill coverage 30%, role fit "
+    "15%, experience 10% and education 5%) ranks the candidates and recommends a top-N shortlist with matched, related and "
+    "missing skills for every candidate. The system is delivered as a multi-user Flask web application: recruiters register and "
+    "log in, every screening is saved in a relational database (SQLite for development, PostgreSQL in production, with Alembic "
+    "migrations), and candidates can be shortlisted, rejected, annotated, searched and exported to CSV. Passwords are hashed "
+    "with scrypt, forms are CSRF-protected, login attempts are rate-limited, and all secrets are read from environment "
+    "variables. The application is packaged with Docker and a Render blueprint and is covered by "
+    f"{NTESTS} automated tests that run on both databases. The models were trained on {M['n_samples']:,} synthetic resumes "
+    f"({M['n_roles']} roles × 200) because real resumes are personal data. On a held-out test set of {M['n_test']} resumes the "
+    f"ensemble reached {h['ensemble']['accuracy'] * 100:.1f}% accuracy ({N_CORRECT}/{M['n_test']}), with 5-fold cross-validation "
+    f"accuracy of {cv['naive_bayes']['accuracy'] * 100:.1f}% (Naive Bayes) and {cv['svm']['accuracy'] * 100:.1f}% (SVM); all five "
+    "hand-written resumes that the data generator never produced were matched to the correct role, and 14 sample resumes in four "
+    f"file formats were screened and saved in a median of {LATENCY} s. Because the training data are synthetic, these figures "
     "show that the pipeline works and are not an estimate of real-world accuracy; the report states this limitation openly and "
     "documents a code-ready path to retrain on real labelled resumes."
 )
@@ -178,7 +187,8 @@ ABBR = [("ML", "Machine Learning"), ("NLP", "Natural Language Processing"), ("TF
         ("REST", "Representational State Transfer"), ("JSON", "JavaScript Object Notation"), ("CSV", "Comma-Separated Values"),
         ("PDF", "Portable Document Format"), ("DOCX", "Office Open XML Word Document"), ("OCR", "Optical Character Recognition"),
         ("NER", "Named Entity Recognition"), ("CSP", "Content Security Policy"), ("CI", "Continuous Integration"),
-        ("UI", "User Interface"), ("WSGI", "Web Server Gateway Interface")]
+        ("UI", "User Interface"), ("WSGI", "Web Server Gateway Interface"), ("ORM", "Object-Relational Mapping"),
+        ("CSRF", "Cross-Site Request Forgery"), ("HSTS", "HTTP Strict Transport Security"), ("SQL", "Structured Query Language")]
 
 
 def abbreviations() -> str:
@@ -195,8 +205,8 @@ def team_roles() -> str:
 <p>Both members jointly owned problem framing, the weekly mentor-review cycle, the literature exploration in Chapter 2, and the final report, and contributed <b>equally (50% : 50%)</b> to the project. Division of the build work below reflects primary ownership; both members reviewed and tested the full system before each milestone.</p>
 <table style="margin-top:26pt"><colgroup><col style="width:22%"><col style="width:24%"><col style="width:54%"></colgroup>
 <thead><tr><th>Team Member</th><th>Primary Role</th><th>Key Responsibilities</th></tr></thead><tbody>
-<tr><td>{S1}<br>({R1})</td><td>ML Pipeline &amp; Backend Lead</td><td>Designed and implemented the resume text extraction (extractor.py), the rule-based NLP parser and skill taxonomy (parser.py, skills.py), the TF-IDF / Naive Bayes / SVM training and evaluation pipeline (train.py, dataset.py), the scoring and role-recommendation engine (engine.py), and the Flask JSON API.</td></tr>
-<tr><td>{S2}<br>({R2})</td><td>Interface, Testing &amp; Deployment Lead</td><td>Designed and implemented the web interface (templates, CSS and JavaScript for the screening, job-match and model-insight pages), prepared the sample resumes and screenshots, wrote the automated test suite, containerised the application with Docker and prepared the Render blueprint and CI workflow.</td></tr>
+<tr><td>{S1}<br>({R1})</td><td>ML Pipeline &amp; Data Backend Lead</td><td>Designed and implemented the resume text extraction (extractor.py), the rule-based NLP parser and skill taxonomy (parser.py, skills.py), the TF-IDF / Naive Bayes / SVM training and evaluation pipeline (train.py, dataset.py), the scoring and role-recommendation engine (engine.py), and, for the web platform, the SQLAlchemy data model, Alembic migrations, the screening and shortlist JSON API and the environment-driven configuration.</td></tr>
+<tr><td>{S2}<br>({R2})</td><td>Interface, Security, Testing &amp; Deployment Lead</td><td>Designed and implemented the web interface (dashboard, screening, shortlist, account and model-insight pages in HTML, CSS and JavaScript), the account system (registration, login, lockout, CSRF protection, rate limits and security headers), the sample resumes and screenshots, the {NTESTS}-test automated suite, and the Docker image, Render blueprint and CI workflow.</td></tr>
 </tbody></table></div>"""
 
 
@@ -241,8 +251,9 @@ def build_body() -> Doc:
         "To apply TF-IDF, Naive Bayes and SVM for ranking and classification, evaluated with a held-out set and cross-validation.",
         "To generate a top-candidate shortlist automatically, explaining each candidate with matched, related and missing "
         "skills, and to recommend suitable roles for a single resume.",
-        "To deliver a working website built with Python, Scikit-learn and Pandas, packaged for deployment on Render, and to "
-        "document the weekly PBL progress and what each member learned."])
+        "To deliver a working multi-user website built with Python, Scikit-learn and Pandas, with accounts, saved screenings and "
+        "shortlist management on a relational database, packaged for deployment on Render, and to document the weekly PBL "
+        "progress and what each member learned."])
     sec("1.4", "Scope and Limitations")
     p(f"ResumeIQ models {M['n_roles']} technology and business job roles (for example Data Scientist, DevOps Engineer, QA Engineer "
       f"and Business Analyst) and works on English, text-based resumes. Skills come from a taxonomy of {NSK} skills with "
@@ -250,8 +261,8 @@ def build_body() -> Doc:
       "have no text layer and are rejected with a clear message; OCR is outside the scope of this build.")
     p(f"The classifiers were trained on {M['n_samples']:,} synthetic resumes, because real resumes are personal data and no real "
       "labelled corpus was available. The reported accuracy therefore measures how well the pipeline separates the synthetic "
-      "roles and is not a real-world estimate (Chapter 6). No uploaded file or candidate data is stored, and every shortlist "
-      "should be reviewed by a person.")
+      "roles and is not a real-world estimate (Chapter 6). Resume files are processed in memory and never stored; only the "
+      "extracted details and scores are saved to the recruiter's own account, and every shortlist should be reviewed by a person.")
 
     # ------------------------------------------------------------ Chapter 2
     d.chapter("CONCEPT EXPLORATION")
@@ -305,55 +316,50 @@ def build_body() -> Doc:
       "web-application build and testing. The table below summarises milestones and the work completed; the Mentor Remarks "
       "column is reserved for the mentor's own comments and sign-off.")
     d.table(["Week", "Milestone / Task", "Work Done", "Mentor Remarks"],
-            [["1–2", "Problem framing, scope (Zeroth Review)", "Selected resume screening and job matching as the problem; fixed the input formats (PDF, DOC, DOCX, TXT), the twelve target job roles and the objectives; presented scope and aim at the Zeroth Review.", "<br><br><br>"],
-             ["3–4", "Concept exploration, baseline plan", "Surveyed TF-IDF, Naive Bayes, SVM and algorithmic-hiring literature (Chapter 2); decided on a text pipeline with two classifiers; designed the skill taxonomy and role catalog.", "<br><br><br>"],
-             ["5–7", "Iteration 1: baseline model", "Implemented PDF/DOCX/TXT text extraction and a first synthetic data generator; trained TF-IDF + Naive Bayes + SVM; obtained 100% hold-out accuracy and recognised that the data were too easy.", "<br><br><br>"],
-             ["8–10", "Iteration 2: refinement", "Made the generator noisier (hybrid, sparse and ambiguous resumes); built the rule-based parser (sections, experience, education), PII removal and the five-part scoring; replaced the one-hot role-fit with a role-affinity measure; added role recommendation.", "<br><br><br>"],
-             ["11–12", "Final approach, implementation, report, demo", "Built the Flask web app and JSON API with the screening, job-match and insight pages; wrote 34 automated tests; fixed defects found in testing; containerised with Docker, prepared the Render blueprint and CI workflow; compiled the final report.", "<br><br><br>"]],
+            [["1–2", "Problem framing (Zeroth Review)", "Selected the problem; fixed the input formats, the twelve job roles and the objectives; presented scope and aim.", "<br>"],
+             ["3–4", "Concept exploration", "Surveyed TF-IDF, Naive Bayes, SVM and algorithmic-hiring literature (Chapter 2); designed the skill taxonomy and role catalog.", "<br>"],
+             ["5–6", "Iteration 1: baseline", "Built text extraction and a first data generator; trained TF-IDF + Naive Bayes + SVM; 100% accuracy showed the data were too easy.", "<br>"],
+             ["7–8", "Iteration 2: refinement", "Noisier generator; rule-based parser, PII removal and five-part scoring; role-affinity measure; role recommendation.", "<br>"],
+             ["9–10", "First web version", "Flask app and JSON API with screening, job-match and insight pages; first 34 tests; Docker image and Render blueprint.", "<br>"],
+             ["11–12", "Iteration 3: platform, report, demo", f"Accounts, PostgreSQL persistence and migrations, dashboard, shortlist management and security hardening; {NTESTS} tests on two databases; browser verification; final report.", "<br>"]],
             "Weekly PBL Progress Log", widths=[8, 20, 50, 22], center_cols=(0,))
     sec("3.2", "Requirements")
     p(f"ResumeIQ operates on text extracted from uploaded resumes. The classifiers are trained on {M['n_samples']:,} generated "
       "resumes; a command-line option (--csv) retrains the same pipeline on any CSV of labelled resumes, so no code change is "
       "needed to move from synthetic to real data. All libraries are open source and the pinned versions below were used for "
-      "every result in this report [11]–[14].")
+      "every result in this report [11]–[14], [19].")
     d.table(["Category", "Requirement"],
-            [["Processor / RAM", "Any x86-64 processor; 2 GB RAM or more. The running web worker used about 184 MB of resident memory (measured); no GPU is required"],
+            [["Processor / RAM", f"Any x86-64 processor; 2 GB RAM or more. The running web worker, with the model and database loaded, used about {RSS} MB of resident memory (measured); no GPU is required"],
              ["Programming language", "Python 3.12 (Docker image); Python 3.13 for local development; HTML, CSS and JavaScript (user interface)"],
-             ["Libraries / frameworks", "scikit-learn 1.9.1, NumPy 2.5.3, pandas 3.0.5, joblib 1.6.0 (machine learning); Flask 3.1.3, Gunicorn 26.2.0 (web); pypdf 6.17.0, python-docx 1.2.0, olefile 0.47 (resume parsing)"],
-             ["External tool", "antiword (text extraction from legacy .doc files, installed in the Docker image)"],
-             ["Development environment", "VS Code; Flask development server; pytest 9 for testing; Chromium (Playwright) for browser verification"],
-             ["Version control / CI", "Git and GitHub (repository: sadhanashan16/Resumescreening); GitHub Actions workflow"],
-             ["Deployment", "Docker container served by Gunicorn on Render (render.yaml blueprint) [15]"]],
+             ["Libraries / frameworks", "scikit-learn 1.9.1, NumPy 2.5.3, pandas 3.0.5, joblib 1.6.0 (machine learning); Flask 3.1.3, Gunicorn 26.2.0, Flask-Login, Flask-WTF, Flask-Limiter (web and accounts); SQLAlchemy 2.1.3, Alembic 1.20.0 (database); pypdf 6.17.0, python-docx 1.2.0, olefile 0.47 (parsing)"],
+             ["Database", "SQLite (development, tests); PostgreSQL 16 (production, tests); Alembic migrations [19]"],
+             ["Tools", "antiword (legacy .doc files); VS Code; pytest 9; Chromium (Playwright) for browser checks; Git and GitHub with a GitHub Actions workflow"],
+             ["Deployment", "Docker container served by Gunicorn on Render with a managed PostgreSQL database (render.yaml blueprint) [15]"]],
             "Hardware and Software Requirements", widths=[26, 74])
     sec("3.3", "Feasibility")
     p(f"Training both classifiers, including 5-fold cross-validation, takes about {M['train_seconds']:.0f} seconds on a single CPU "
       "core, and the trained model file is under 3 MB. Screening all fourteen sample resumes (four file formats, including "
-      f"text extraction) took a median of {LATENCY} s and recommending roles for one resume took about {LAT['match1_median_s'] * 1000:.0f} ms, so the "
+      f"text extraction and saving the results to the database) took a median of {LATENCY} s and recommending roles for one resume took about {LAT['match1_median_s'] * 1000:.0f} ms, so the "
       "complete PBL cycle (baseline, refinement and final system) was achievable within the twelve-week timeframe on ordinary "
       "student laptop hardware.")
-    p("The most time-consuming part of the project was not model training but the parts around the model: the skill taxonomy "
-      "and its aliases, reliable parsing of dates and degrees, a realistic data generator, and a safe, verified web interface.")
 
     # ------------------------------------------------------------ Chapter 4
     d.chapter("ITERATIVE DESIGN AND DEVELOPMENT")
     sec("4.1", "System Architecture")
-    p("The end-to-end pipeline runs: uploaded resume → text extraction → NLP parsing (sections, skills, education, experience, "
-      "contact details) → normalisation (personal identifiers removed, skills collapsed to canonical tokens) → TF-IDF "
-      "vectorisation → Naive Bayes and SVM role probabilities → ensemble → five-part scoring against the job description → "
-      "ranked shortlist or role recommendations delivered through a Flask web application and JSON API. Figure 4.1 shows this as "
-      "a block diagram; each block is described below it.")
-    p("Input and extraction: a resume is accepted as PDF, DOC, DOCX or TXT (up to 30 files of 5 MB each per run). The file type "
-      "is checked by extension and by content signature, and text is extracted with pypdf, python-docx or antiword; a file with "
-      "no readable text (for example a scanned image) is rejected with an explanatory message.")
+    p("A recruiter's browser talks over HTTPS to a Flask application served by Gunicorn inside a Docker container. The "
+      "application has four parts: a security layer (response headers, CSRF checks, rate limits), an authentication blueprint, "
+      "the page views and a JSON API. Behind them sit the machine-learning engine, loaded once at start-up from the trained "
+      "model file, and a relational database that holds users, screenings and candidates (Figure 4.1). Section 4.4 describes the "
+      "ML pipeline in detail: resume → text extraction → NLP parsing → normalisation → TF-IDF → Naive Bayes and SVM → "
+      "five-part score → ranked shortlist.")
     d.figure(FIG / "fig_architecture.png", "System Architecture Diagram", 100)
-    p(f"NLP parsing and normalisation: the parser splits the text into sections, recognises skills from the {NSK}-skill taxonomy, "
-      "estimates years of experience from date ranges and stated figures, detects the highest degree, and extracts contact "
-      "details. For scoring, the name, e-mail, phone numbers and links are removed, and every recognised skill is replaced by a "
-      "single canonical token so that “sklearn” and “scikit-learn” are the same feature.")
-    p("Classification and scoring: the TF-IDF vectoriser feeds a Multinomial Naive Bayes model and a calibrated linear SVM; "
-      "their probabilities are averaged into a role distribution. The scoring engine combines this with cosine similarity, "
-      "skill coverage, experience and education into a 0–100 score. Offline, the training script builds the dataset, fits the "
-      "models and writes model.joblib and metrics.json, which the web application loads at start-up.")
+    p("A resume is accepted as PDF, DOC, DOCX or TXT (up to 30 files of 5 MB each per run); the file type is checked by "
+      "extension and content signature, text is extracted with pypdf, python-docx or antiword, and a file with no readable text "
+      "(for example a scanned image) is rejected with a clear message. The parser then recognises skills, education, experience "
+      "and contact details, removes the personal identifiers for scoring and maps each skill to one canonical token.")
+    p("The TF-IDF vectoriser feeds a Multinomial Naive Bayes model and a calibrated linear SVM whose probabilities are "
+      "averaged; the scoring engine combines them with cosine similarity, skill coverage, experience and education into a 0–100 "
+      "score, and the result is saved against the logged-in user. Offline, the training script writes model.joblib and metrics.json.")
     sec("4.2", "Iteration 1: Baseline")
     p("The simplest working version generated resumes from the role catalog using role-specific experience-bullet templates, "
       "vectorised them with TF-IDF (unigrams and bigrams) and trained a Multinomial Naive Bayes classifier and a calibrated "
@@ -428,83 +434,107 @@ def build_body() -> Doc:
              ["Output", "model.joblib (vectoriser, both classifiers, labels) and metrics.json"]],
             "Dataset and Model Configuration", widths=[24, 76])
 
+    sec("4.6", "Iteration 3: Multi-user Platform")
+    p("The first web version was open to anyone and kept nothing, which suits a demonstration but not a recruiter who wants to "
+      "return to yesterday's shortlist. Iteration 3 therefore added accounts, persistence and shortlist management without "
+      "changing the ML pipeline: the stored results are exactly the engine's output, and a test asserts this. The data model has "
+      "three tables (Table 4.3). Resume files themselves are never stored.")
+    d.table(["Table", "Main columns", "Purpose and constraints"],
+            [["users", "email (unique), name, password_hash, session_token, failed_logins, locked_until", "One row per recruiter; e-mail is lower-cased; the password is stored only as a scrypt hash"],
+             ["screenings", "user_id, job_title, job_description, job_info, top_n, total, errors, created_at", "One screening run; deleting a user deletes the runs (ON DELETE CASCADE)"],
+             ["candidates", "screening_id, user_id, rank, name, email, score, grade, recommended, status, notes, data (JSON)", "One scored resume; status is pending, shortlisted or rejected; indexed on user, screening, score and status"]],
+            "Database Tables (SQLAlchemy models, created by an Alembic migration)", widths=[14, 44, 42])
+    p("Security was designed in rather than added afterwards. The OWASP verification standard [16] guided the checklist, scrypt "
+      "[17] the password storage and a Content Security Policy [18] the browser restrictions; Table 4.4 lists the controls, each "
+      "covered by an automated test.")
+    d.table(["Area", "Control in ResumeIQ"],
+            [["Passwords", "At least 8 characters with a letter and a number; stored as scrypt hashes (Werkzeug default, N = 32768, r = 8, p = 1); a check costs about " + f"{MEAS['password_check_median_ms']:.0f} ms"],
+             ["Login", "Unknown e-mail and wrong password give the same message and timing; 5 failures lock the account for 15 minutes; 15 attempts per minute per address; post-login redirects limited to same-site paths"],
+             ["Sessions", "HttpOnly, SameSite=Lax and (in production) Secure cookies; a per-user session token that is rotated on password change so all other sessions stop working"],
+             ["Requests", "CSRF token on every form and every state-changing API call; screening limited to 60 and job matching to 120 requests per hour per user; 30 sign-ups per hour per address"],
+             ["Data access", "Every query is filtered by the logged-in user; another user's screening or candidate returns 404; CSV export neutralises spreadsheet formulas"],
+             ["Browser", "Strict Content Security Policy (no inline scripts or styles), HSTS, same-origin referrer policy and no-store caching of account pages"],
+             ["Secrets and deployment", "SECRET_KEY and DATABASE_URL come only from environment variables; production refuses to start without a secret key and, on Render, without a database"]],
+            "Security Controls", widths=[16, 84], keep=True)
+
     # ------------------------------------------------------------ Chapter 5
     d.chapter("IMPLEMENTATION")
     sec("5.1", "Module Description")
     sub("", "Machine-learning package: resume_screening/")
     ul(["extractor.py: converts PDF (pypdf), DOCX (python-docx), DOC (antiword, with an olefile fallback) and TXT files to text, checks file signatures and raises user-readable errors for empty, encrypted or scanned files.",
-        f"skills.py: the {NSK}-skill taxonomy with aliases, a case-sensitive guard for ambiguous words (Excel, React, Spring), a regular-expression extractor, and related-skill families used for partial credit.",
-        "parser.py: section detection, contact-detail extraction, experience estimation (union of dated ranges), education-level detection, and job-description parsing.",
-        "text_utils.py: removal of e-mails, URLs and phone numbers, and canonicalisation of skills into vocabulary tokens.",
-        "catalog.py and dataset.py: the twelve job-role profiles and the synthetic resume generator with the noise sources described in Chapter 4.",
-        "train.py: builds the dataset, runs cross-validation, trains Naive Bayes and the calibrated SVM, evaluates on the hold-out set and writes the model and metrics.",
-        "engine.py: loads the model, ranks resumes against a job description, computes the five-part score and recommends roles for a single resume."])
-    sub("", "Web application")
-    ul(["app.py: the Flask application with four pages (home, screen candidates, find job match, model insights), a JSON API (/api/screen, /api/match, /api/roles, /api/samples, /api/model, /health), upload validation and security headers.",
-        "templates/ and static/: the user interface in HTML, CSS and JavaScript; dynamic content is built with textContent so that uploaded text can never inject markup, and a strict Content Security Policy is enforced.",
-        "tests/: 34 pytest tests; samples/: 14 fictional sample resumes in PDF, DOCX, DOC and TXT formats; Dockerfile, render.yaml and .github/workflows/ci.yml for deployment and CI."])
+        f"skills.py and parser.py: the {NSK}-skill taxonomy with aliases and related-skill families, section detection, contact-detail extraction, experience estimation (union of dated ranges), education-level detection and job-description parsing.",
+        "text_utils.py, catalog.py and dataset.py: removal of personal identifiers, canonical skill tokens, the twelve job-role profiles and the synthetic resume generator.",
+        "train.py and engine.py: train and evaluate Naive Bayes and the calibrated SVM and write the model and metrics; load the model, rank resumes against a job description, compute the five-part score and recommend roles."])
+    sub("", "Web platform: app.py and webapp/")
+    ul(["app.py: the application factory create_app(), which loads the configuration, initialises the extensions, registers the blueprints, error handlers and security headers, and exposes the WSGI application used by Gunicorn.",
+        "settings.py and extensions.py: environment-driven configuration (SECRET_KEY, DATABASE_URL, cookie flags, production safeguards) and the shared SQLAlchemy, Alembic, Flask-Login, CSRF and rate-limiter objects.",
+        "models.py and migrations/: the User, Screening and Candidate models and the Alembic revision that creates them; forms.py: validated registration, login, password-change and account-deletion forms.",
+        "auth.py: sign-up, login, logout, lockout and account settings; views.py: the dashboard, screening list, screening detail, shortlist, job-match and insight pages; api.py: the JSON endpoints for screening, candidates, CSV export and job matching.",
+        f"templates/ and static/: the interface in HTML, CSS and JavaScript (dynamic content is built with textContent so uploaded text cannot inject markup); tests/: {NTESTS} pytest tests; samples/: 14 fictional resumes; Dockerfile, start.sh, render.yaml and .github/workflows/ci.yml for deployment and CI."])
     sec("5.2", "Key Code Snippets")
     p("The normalisation function removes personal identifiers and turns each skill spelling variant into one token, so “sklearn” "
       "and “scikit-learn” become the same feature:")
     d.code(src(text_utils.normalize_for_model), "Name-blind text normalisation (text_utils.py)")
-    p("Skill coverage gives full credit for a skill the resume lists and half credit for a related skill from the same family:")
-    so = "\n".join(l for l in src(eng_mod.ScreeningEngine._skill_overlap).splitlines()
-                    if not l.startswith("@staticmethod") and '"""Coverage' not in l)
-    d.code(so, "Skill coverage with related-skill partial credit (engine.py, excerpt)", split=True)
-    p("The final score is the re-normalised weighted sum of the components that are available for the job description:")
-    sc = src(eng_mod.ScreeningEngine.score_resume)
-    sc = sc[: sc.index("    have_set = set(job")].rstrip()
-    d.code(sc, "Five-part weighted scoring (engine.py, excerpt)", split=True)
+    p("On the account side, a failed login never reveals whether the e-mail exists, and repeated failures lock the account:")
+    lg = src(auth_mod.login)
+    lg = lg[lg.index("        # Unknown e-mail"): lg.index('        flash("Invalid email')].rstrip()
+    d.code(textwrap.dedent(lg), "Failed-login handling and lockout (auth.py, excerpt)")
     sec("5.3", "User Interface / Demo")
-    p("The home page explains the five-stage pipeline and links to the two tools. In recruiter mode (Screen candidates) the "
-      "user pastes a job description or loads one of the twelve example descriptions, adds resumes by drag-and-drop (or ticks the "
-      "built-in sample resumes for a quick demonstration) and chooses the shortlist size.")
-    d.figure(FIG / "ui_home.png", "Home Page of ResumeIQ", 74)
-    d.figure(FIG / "ui_screen_form.png", "Screen Candidates Page with a Job Description and Resumes", 74)
-    p("The results page shows the job type detected from the description (with the classifier's confidence), the skills "
-      "extracted from it and summary counts, followed by one card per candidate in rank order. Each card shows the score and "
-      "grade, the predicted role, estimated experience and education, and the matched, related (partial credit) and missing "
-      "skills; an expandable panel gives the per-component score bars and the separate Naive Bayes and SVM predictions. The "
-      "shortlist and the full ranking can be downloaded as CSV, with spreadsheet formula characters neutralised.")
-    d.figure(FIG / "ui_screen_results.png", "Screening Results: Ranked Candidates with Skill Evidence", 74)
-    p("In candidate mode (Find job match), a single resume, pasted text or a sample is analysed and the best-fit roles are "
-      "listed with their scores, the skills already matched and the skills to learn. The Model insights page reports the "
-      "dataset, the model comparison, the per-role results, the confusion matrix and the most predictive terms, and states "
-      "prominently that the data are synthetic.")
-    d.figure(FIG / "ui_match_results.png", "Find Job Match: Role Recommendations for One Resume", 74)
-    d.figure(FIG / "ui_insights.png", "Model Insights Page", 74)
-    p("Uploaded files are read into memory, scored and discarded; nothing is written to disk or stored. File type is validated "
-      "by extension and content signature, size and count are limited, error responses never expose internals, and the "
-      "browser is restricted by a Content Security Policy that blocks inline scripts and styles.")
+    p("A new visitor sees the sign-up and login pages; the password field shows a strength meter and a Show toggle. After "
+      "logging in, the recruiter lands on a dashboard with live totals (screenings, candidates screened, shortlisted, average "
+      "score), the most recent screenings, the shortlist pipeline and the distribution of match grades. A sidebar gives access to "
+      "New screening, Screenings, Shortlist, Job match and Model insights, and collapses to a menu on a phone.")
+    p("To screen candidates, the recruiter pastes a job description or loads one of the twelve examples, drops resumes onto the "
+      "upload area (or ticks the 14 built-in samples) and chooses how many candidates the AI should recommend. The resumes are "
+      "scored by the same engine as before and the run is saved to the account.")
+    d.figure(FIG / "ui_dashboard.png", "Dashboard After Logging In", 68)
+    d.figure(FIG / "ui_screen_form.png", "New Screening Page with a Job Description and Resumes", 68)
+    p("The screening page shows the job type detected from the description, the skills extracted from it and counts per status. "
+      "Candidates are listed in rank order as a table or as cards, with score, grade, experience, education and key skills, and "
+      "can be searched, filtered by grade or status and sorted. Selecting a candidate opens a panel with the five score "
+      "components, the Naive Bayes and SVM predictions and the matched, related and missing skills, with buttons to shortlist, "
+      "reject or reset the candidate and a notes field. “Shortlist AI top N” accepts the recommendation in one click.")
+    d.figure(FIG / "ui_screening_detail.png", "Saved Screening: 15 Resumes Ranked, AI Top 5 Shortlisted", 68)
+    p("The Shortlist page gathers the shortlisted candidates of every screening, with search, filters, notes and CSV export. "
+      "The Job match page recommends roles for one resume, and Model insights reports the dataset, the model comparison and the "
+      "confusion matrix and states that the data are synthetic.")
+    d.figure(FIG / "ui_shortlist.png", "Shortlist Page Across All Screenings", 68)
 
     sec("5.4", "Interfaces and Deployment")
-    p("The same engine serves both the web pages and a JSON API, so the system can be used from a browser or called by another "
-      "program. Table 5.1 lists the endpoints. Uploads are accepted as multipart form data; the resumes are read into memory, "
-      "scored and discarded, and error responses are returned as JSON with a plain-language message.")
+    p("The same engine serves the web pages and a JSON API, so the system can be used from a browser or called by another "
+      "program after logging in. Table 5.1 lists the main endpoints. Uploads are accepted as multipart form data and errors "
+      "are returned as JSON with a plain-language message.")
     d.table(["Endpoint", "Method", "Purpose"],
-            [["/", "GET", "Home page with the pipeline overview"],
-             ["/screen, /match, /insights", "GET", "Recruiter screening page, single-resume job-match page and model-insights page"],
-             ["/api/screen", "POST", "Rank uploaded resumes (up to 30) against a job description and return the shortlist as JSON"],
-             ["/api/match", "POST", "Recommend job roles for one resume (uploaded file, pasted text or a built-in sample)"],
-             ["/api/roles, /api/samples, /api/model", "GET", "Example job descriptions, sample resume list and the stored training metrics"],
-             ["/health", "GET", "Health check used by the hosting platform"]],
-            "Web Pages and JSON API Endpoints", widths=[34, 12, 54], center_cols=(1,), keep=True)
-    p("Deployment follows the standard container route for a machine-learning web service. The Dockerfile starts from a slim "
-      "Python 3.12 image, installs antiword for legacy .doc files, installs the pinned requirements, and trains the model while "
-      "the image is built, so the container starts immediately and the deployed model is exactly the one that was evaluated. "
-      "The application runs under Gunicorn with one worker and four threads, which keeps the resident memory at about 184 MB "
-      "(measured) and therefore inside the 512 MB limit of Render's free plan. A render.yaml blueprint describes the web "
-      "service and its health check, and a GitHub Actions workflow runs the tests and builds the image on every push.")
+            [["/register, /login, /logout, /account", "GET, POST", "Sign up, log in, log out, change password or delete the account (rate-limited, CSRF-protected)"],
+             ["/dashboard, /screenings, /screenings/new, /shortlist", "GET", "Dashboard, saved screenings, new screening form and the cross-screening shortlist"],
+             ["/screenings/&lt;id&gt;", "GET", "One saved screening with its ranked candidates (owner only)"],
+             ["/api/screen", "POST", "Rank uploaded resumes (up to 30) against a job description, save the run and return its URL"],
+             ["/api/screenings[/id]", "GET, DELETE", "List, open or delete the user's screenings"],
+             ["/api/candidates[/id|/bulk|/export.csv]", "GET, PATCH, POST", "Search, filter and page candidates; shortlist, reject, annotate or bulk-update them; export CSV"],
+             ["/api/match, /api/roles, /api/samples, /api/model", "POST, GET", "Role recommendations for one resume, example job descriptions, sample resumes and training metrics"],
+             ["/health", "GET", "Health check that also confirms the database is reachable"]],
+            "Web Pages and JSON API Endpoints", widths=[38, 14, 48], center_cols=(1,))
+    p("Deployment follows the standard container route. The Dockerfile starts from a slim Python 3.12 image, installs antiword "
+      "for legacy .doc files and the pinned requirements, and trains the model while the image is built, so the deployed model "
+      "is exactly the one that was evaluated. At start-up, start.sh checks the configuration, applies the Alembic migrations "
+      "(retrying while the database wakes up) and launches Gunicorn with one worker and four threads, which keeps the resident "
+      f"memory at about {RSS} MB (measured) inside the 512 MB limit of Render's free plan. The render.yaml blueprint creates the "
+      "web service and a PostgreSQL database, generates SECRET_KEY, injects DATABASE_URL and sets REQUIRE_PERSISTENT_DB so that "
+      "the site refuses to run on a throw-away database. A GitHub Actions workflow runs the tests on SQLite and PostgreSQL and "
+      "builds the image, boots it against a throw-away PostgreSQL and checks /health on every push.")
     d.table(["Test file", "Tests", "What it checks"],
-            [["test_skills_parser.py", "12", "Skill aliases and ambiguous words, Java versus JavaScript, text normalisation, contact details, experience from overlapping dates, education levels, job-description parsing"],
-             ["test_extractor.py", "9", "TXT, DOCX, PDF and legacy DOC extraction, and friendly errors for empty, corrupt, scanned or unsupported files"],
-             ["test_engine.py", "6", "Metrics file consistency, five hand-written resumes, ranking order, name-blind scoring, re-weighting when a requirement is missing, role recommendations"],
-             ["test_app.py", "7", "Page rendering and security headers, screening with uploads, validation of bad input, the 30-file limit, role matching and restricted sample downloads"]],
-            "Automated Test Suite (34 tests)", widths=[24, 9, 67], center_cols=(1,), keep=True)
-    p("Besides the automated tests, each page was driven in a real browser (Chromium): a job description was loaded, resumes were "
-      "uploaded, the CSV export was downloaded and the model-insights page was opened, with the browser console checked for "
-      "script and Content-Security-Policy errors. The deployed configuration was also checked by installing only the pinned "
-      "requirements into a clean environment, training the model and serving the application with Gunicorn.")
+            [["test_skills_parser.py", str(TF["test_skills_parser.py"]), "Skill aliases and ambiguous words, text normalisation, contact details, experience from overlapping dates, education levels, job-description parsing"],
+             ["test_extractor.py", str(TF["test_extractor.py"]), "TXT, DOCX, PDF and legacy DOC extraction, and friendly errors for empty, corrupt, scanned or unsupported files"],
+             ["test_engine.py", str(TF["test_engine.py"]), "Metrics consistency, five hand-written resumes, ranking order, name-blind scoring, re-weighting, role recommendations"],
+             ["test_app.py", str(TF["test_app.py"]), "Page rendering, security headers, no inline scripts or styles, health check, job match, restricted sample downloads, input validation, error pages"],
+             ["test_auth.py", str(TF["test_auth.py"]), "Registration rules, hashed passwords, login and logout, identical failure messages, lockout, safe redirects, password change rotating sessions, account deletion, CSRF, rate limits, cookie flags"],
+             ["test_screenings.py", str(TF["test_screenings.py"]), "Stored results equal engine output, shortlist, reject and notes, bulk updates, search, filter and paging, CSV export, deletion, isolation between users, dashboard counts"],
+             ["test_config.py", str(TF["test_config.py"]), "Database URL normalisation, SECRET_KEY and persistent-database requirements in production, migrations build the same schema as the models"]],
+            f"Automated Test Suite ({NTESTS} tests)", widths=[24, 8, 68], center_cols=(1,), keep=True)
+    p("Besides the automated tests, the platform was driven in a real browser (Chromium) over HTTPS against PostgreSQL 16: an "
+      "account was registered, resumes were screened, candidates were shortlisted, the CSV export was downloaded and the pages were "
+      "checked at desktop and phone width with the console free of script and Content-Security-Policy errors. Start-up was also "
+      "checked in production mode with a missing secret key, a missing database and a database fallback.")
 
     # ------------------------------------------------------------ Chapter 6
     d.chapter("RESULTS AND DISCUSSION")
@@ -518,8 +548,8 @@ def build_body() -> Doc:
     d.figure(FIG / "fig_metrics.png", "Evaluation Metrics: Final Model and Accuracy Across Data Iterations", 100)
     p("Three further instruments were used: (a) a set of five hand-written resumes, in a style different from the generator, that "
       "must be classified to the correct role; (b) behavioural tests of the scoring engine (ranking order, name-blindness, "
-      "re-weighting when a requirement is missing); and (c) 34 automated tests covering the parser, extractor, engine and "
-      "web interface, plus verification of the pages in a real browser at desktop width and of the screening page at phone width.")
+      f"re-weighting when a requirement is missing); and (c) {NTESTS} automated tests covering the parser, extractor, engine, "
+      "accounts, persistence and web interface, plus verification of the pages in a real browser at desktop and phone width.")
     sec("6.2", "Results Across Iterations")
     d.table(["Version", "Training data", "Hold-out accuracy (NB / SVM / Ensemble)", "Key finding"],
             [["Iteration 1", "Template resumes only", "1.000 / 1.000 / 1.000", "Perfect score; label recoverable from template phrases, so the data were too easy"],
@@ -535,7 +565,7 @@ def build_body() -> Doc:
             [[r["title"], f"{r['precision']:.3f}", f"{r['recall']:.3f}", f"{r['f1']:.3f}", str(r["support"])] for r in M["per_role"]],
             "Per-role Results of the Ensemble on the Hold-out Set", widths=[34, 16, 16, 16, 18], center_cols=(1, 2, 3, 4))
     p("To see the ranking behave end to end, the fourteen built-in sample resumes were screened against the example Data Scientist "
-      f"job description (a median of {LATENCY} s for all fourteen, including text extraction from PDF, DOCX, DOC and TXT files). "
+      f"job description (a median of {LATENCY} s for all fourteen, including text extraction from PDF, DOCX, DOC and TXT files and saving the run). "
       "Figure 6.3 and Table 6.3 show the highest-ranked candidates.")
     cands = RANK["candidates"][:8]
     d.table(["Rank", "Candidate", "Predicted role", "Score", "Grade", "Text sim.", "Skills"],
@@ -543,7 +573,18 @@ def build_body() -> Doc:
               f"{c['components']['text_similarity']:.0f}", f"{c['components']['skills']:.0f}"] for c in cands],
             "Top Candidates for the Data Scientist Job (14 Sample Resumes)", widths=[8, 20, 27, 10, 12, 11, 12], center_cols=(0, 3, 4, 5, 6))
     d.figure(FIG / "fig_ranking.png", "Live Ranking of the Sample Resumes for the Data Scientist Job", 78)
-    sec("6.3", "Discussion")
+    sec("6.3", "Platform Verification and Performance")
+    p("The platform was measured through the application's own test client on SQLite, so every call used the real views, "
+      "database writes and ML engine (Table 6.4). The figures describe one laptop-class machine and are not a load test.")
+    d.table(["Measurement", "Result"],
+            [["Screening 14 sample resumes (4 file formats), including extraction and saving", f"median {MEAS['screen14_median_s']:.3f} s, maximum {MEAS['screen14_max_s']:.3f} s"],
+             ["Opening a 14-candidate screening list (API)", f"median {MEAS['candidate_list_median_ms']:.1f} ms"],
+             ["Loading the dashboard", f"median {MEAS['dashboard_median_ms']:.1f} ms"],
+             ["One password check (scrypt)", f"median {MEAS['password_check_median_ms']:.0f} ms (deliberately slow)"],
+             ["Resident memory of the running web process", f"about {RSS} MB"],
+             ["Automated tests", f"{NTESTS} passed on SQLite and on PostgreSQL 16"]],
+            "Measured Performance and Verification of the Platform", widths=[68, 32], keep=True)
+    sec("6.4", "Discussion")
     p("The most consistent observation is that the two classifiers agree: Naive Bayes and the calibrated SVM predicted the same "
       "role for every resume in the sample screening, and their one-error result on the hold-out set is shared. This is partly "
       "a property of the synthetic data, in which each role has a distinctive skill vocabulary; the ensemble's value would be "
@@ -551,17 +592,19 @@ def build_body() -> Doc:
     p("The scoring layer, rather than the classifier, is what makes the output useful to a recruiter. In the Data Scientist "
       "example the two Data Scientist resumes scored in the strong band (72.0 and 70.7), related roles in the partial band, and "
       "unrelated roles below 30. Because every component is shown, a recruiter can see why a candidate ranked where they did, "
-      "for instance a missing Deep Learning skill, and can override the score. The related-skill rule and the role-affinity "
+      "for instance a missing Deep Learning skill, and can override the score; the shortlist, reject and notes controls keep that "
+      "human decision next to the AI recommendation. The related-skill rule and the role-affinity "
       "measure were introduced because the first, stricter versions penalised near-misses that a human reader would forgive.")
     p("Name-blind scoring was verified directly: replacing a resume's name and e-mail address leaves its score unchanged. This "
       "removes one channel for bias but is not a fairness guarantee, because other fields such as institution names or "
       "employment gaps can still correlate with protected characteristics; a proper audit needs real, demographically annotated "
       "resumes that were not available to the team.")
-    p("Several defects were found only because the system was tested as a web service rather than a notebook: a file-name "
-      "fallback produced “Priya Sharma Resume” instead of “Priya Sharma”; inline style attributes blocked by the Content "
-      "Security Policy silently removed spacing; the CSV spreadsheet-injection guard altered phone numbers beginning with “+”; "
-      "and confusion-matrix headers were clipped. Each was corrected and covered by a test or a browser check.")
-    sec("6.4", "Limitations")
+    p("Several defects were found only because the system was tested as a web service rather than a notebook: inline style "
+      "attributes blocked by the Content Security Policy silently removed spacing; the CSV spreadsheet-injection guard altered "
+      "phone numbers beginning with “+”; a loading overlay stayed visible because a CSS display rule overrode the hidden "
+      "attribute; choosing an example job description before the script had loaded did nothing; and a sign-up limit of 10 per "
+      "hour proved too tight for a shared network. Each was corrected and covered by a test or a browser check.")
+    sec("6.5", "Limitations")
     ul([f"The classifiers were trained on {M['n_samples']:,} synthetic resumes. The 99.8% hold-out accuracy shows that the pipeline "
         "works and the roles are separable in the generated data; it is not a real-world accuracy estimate, and real resumes are "
         "expected to give lower and more variable results. The five hand-written resumes are a modest sanity check, not a "
@@ -572,30 +615,33 @@ def build_body() -> Doc:
         "extraction quality.",
         "The score weights, the similarity ceiling (0.45), the affinity value (0.4) and the grade thresholds are design choices "
         "calibrated on the sample resumes, not parameters learned from recruiter decisions.",
-        "The system supports twelve roles and English text only, keeps no database or user accounts, and is a decision aid that "
-        "requires human review."])
+        "The system supports twelve roles and English text only and is a decision aid that requires human review.",
+        "The accounts have no e-mail verification or password reset, use library-default scrypt parameters, and count rate "
+        "limits per worker, which suits the single-worker deployment but not a scaled-out one.",
+        "Saved candidate records hold names, e-mails and phone numbers, so a real deployment needs a consent and retention "
+        "policy; Render's free PostgreSQL plan also expires after about 30 days."])
 
     # ------------------------------------------------------------ Chapter 7
     d.chapter("TEAM REFLECTION AND LEARNING OUTCOMES")
     sec("7.1", "Individual Reflections")
-    p(f"<b>{S1}:</b> I focused on the machine-learning pipeline: the text extractor, the skill taxonomy and parser, the TF-IDF, "
-      "Naive Bayes and SVM training code, the data generator and the scoring engine. The biggest thing I learned is that a "
-      "perfect score is a question, not an answer: when the first model reached 100% accuracy I had to go back and discover that "
-      "the generator, not the model, was doing the work. Making the data realistically hard, and then accepting that it was "
-      "still easy and saying so, taught me more about evaluation than the models themselves. The hardest part was the parser: "
-      "dates, degrees and skills are written in so many ways that every rule had to be tested against awkward examples.")
-    p(f"<b>{S2}:</b> I focused on the web interface, the sample resumes, the automated tests and the deployment files. "
-      "Building the interface in plain HTML, CSS and JavaScript with a strict Content Security Policy showed me how many small "
-      "things can go wrong between a working model and a usable product: blocked inline styles, clipped chart labels, and a "
-      "CSV export that quietly changed phone numbers. The most valuable habit was checking the pages in a real browser, "
-      "including at phone width, instead of trusting that the code looked correct, and writing a test for each defect once it "
-      "had been found.")
+    p(f"<b>{S1}:</b> I focused on the machine-learning pipeline (extractor, skill taxonomy and parser, TF-IDF, Naive Bayes and "
+      "SVM training, data generator, scoring engine) and, in the last iteration, the database layer. The biggest thing I learned "
+      "is that a perfect score is a question, not an answer: when the first model reached 100% accuracy I had to discover that "
+      "the generator, not the model, was doing the work. Moving from a stateless demo to saved screenings taught me a second "
+      "lesson: storing the engine's output unchanged, and testing that it is unchanged, kept the ML and the platform "
+      "independent, and the Alembic migration forced me to think about the schema before any data existed.")
+    p(f"<b>{S2}:</b> I focused on the interface, the account system, the automated tests and the deployment files. Building the "
+      "interface with a strict Content Security Policy showed me how many small things can go wrong between a working model and a "
+      "usable product, from blocked inline styles to a loading overlay that would not hide. Writing the login code taught me "
+      "that security is mostly about the cases nobody demonstrates: identical messages for unknown users, lockout, rotating "
+      "sessions on a password change and checking ownership on every query. The most valuable habit was driving the pages in a real "
+      "browser, on PostgreSQL and at phone width, and writing a test for each defect once it had been found.")
     sec("7.2", "Team Learning")
     p("Splitting ownership along the pipeline/interface boundary worked well once the JSON response format of the engine was "
       "fixed early, because it allowed both members to work in parallel: the interface was built against a documented response "
-      "shape while the scoring logic was still being refined underneath it. What we would do differently if we restarted the "
-      "cycle is lock that response format even earlier; several interface components had to be reworked when the score "
-      "breakdown and the related-skills field were added in Iteration 2.")
+      "shape while the scoring logic was still being refined underneath it. The same contract made Iteration 3 possible, since "
+      "the database stores that response unchanged. What we would do differently is lock the response format even earlier; "
+      "several interface components had to be reworked when the score breakdown and the related-skills field were added.")
     p("The change that most improved the project was the decision, after the first perfect score, to treat the evaluation "
       "itself as something to be tested. It led to a harder data generator, to a hand-written sanity check, to an honest "
       "limitations section, and to scoring components that a recruiter can read instead of a single opaque number. Both members "
@@ -607,13 +653,13 @@ def build_body() -> Doc:
         "cosine-similarity scoring, evaluated with a hold-out set and cross-validation, demonstrate applied understanding of "
         "supervised text classification (Chapters 2 and 4).",
         "Problem framing and iteration: the weekly progress log (Table 3.1) and the Iteration 1 → Iteration 2 → Final Approach "
-        "progression (Chapter 4) show the build evolving in response to specific findings, notably the first perfect score and "
-        "the one-hot role-fit result.",
+        "progression (Chapter 4) show the build evolving in response to specific findings, notably the first perfect score, the "
+        "one-hot role-fit result and the need for accounts once results had to be kept.",
         "Teamwork and division of labour: the Team Roles table and the reflections above (Section 7.1) show a consistent "
-        "pipeline/interface split with equal contribution and joint review before each milestone.",
-        "Engineering rigour beyond the model: 34 automated tests, browser verification, defects found and fixed (Chapter 6), "
-        "upload validation, a strict Content Security Policy and a Docker-based deployment show that the system was treated as a "
-        "service to be verified, not only a model to be fitted.",
+        "pipeline/platform and interface/security split with equal contribution and joint review before each milestone.",
+        f"Engineering rigour beyond the model: {NTESTS} automated tests on two databases, browser verification, defects found "
+        "and fixed (Chapter 6), hashed passwords, CSRF protection, a strict Content Security Policy and a Docker and Render "
+        "deployment show that the system was treated as a service to be verified, not only a model to be fitted.",
         "Honest self-assessment: Chapter 6 states plainly that the data are synthetic and that the headline accuracy is not a "
         "real-world estimate, which is the candid, reflective evaluation the PBL format asks for."])
 
@@ -625,21 +671,20 @@ def build_body() -> Doc:
       "resumes into a ranked, explainable shortlist and into role recommendations, without using a candidate's name or contact "
       f"details and on ordinary laptop hardware. On {M['n_test']} held-out synthetic resumes the ensemble reached "
       f"{h['ensemble']['accuracy'] * 100:.1f}% accuracy, all five hand-written resumes were matched to the correct role, and fourteen "
-      f"sample resumes in four file formats were screened in about {LATENCY} s. Delivered as a tested Flask web application with a "
-      "JSON API and a Docker and Render deployment package, the project addressed its driving question directly: text-based "
-      "models can separate job roles and rank resumes in a way that a recruiter can inspect. Because the training data are "
-      "synthetic, the numerical results show that the pipeline works rather than how accurate it would be on real resumes.")
+      f"sample resumes in four file formats were screened and saved in about {LATENCY} s. Delivered as a multi-user Flask web "
+      f"application with accounts, a PostgreSQL-backed history of screenings, shortlist management, {NTESTS} automated tests and a "
+      "Docker and Render deployment package, the project addressed its driving question directly: text-based models can separate "
+      "job roles and rank resumes in a way that a recruiter can inspect and act on. Because the training data are synthetic, the "
+      "numerical results show that the pipeline works rather than how accurate it would be on real resumes.")
     sec("8.2", "Future Scope")
-    ul(["Train and validate on real, labelled resumes (the --csv option already retrains the same pipeline), with the "
-        "consent and anonymisation procedures that personal data requires, and report real-world accuracy.",
-        "Replace the rule-based extractor with a trained named-entity model and extend the skill taxonomy and role catalog "
-        "beyond twelve roles and English-language resumes.",
-        "Add optical character recognition so that scanned resumes can be processed.",
-        "Carry out a fairness audit on real, demographically annotated data, and add monitoring so that score distributions can "
-        "be compared across groups.",
-        "Learn the score weights and the similarity ceiling from recruiter decisions instead of fixing them by hand, and add "
-        "recruiter feedback to refine rankings.",
-        "Add persistent storage, user accounts and audit logging, and deploy the packaged container on Render with usage monitoring."])
+    ul(["Train and validate on real, labelled resumes (the --csv option already retrains the same pipeline), with proper consent "
+        "and anonymisation, and run a fairness audit on demographically annotated data.",
+        "Replace the rule-based extractor with a trained named-entity model, add optical character recognition for scanned "
+        "resumes, and extend the skill taxonomy and role catalog beyond twelve roles and English.",
+        "Learn the score weights and the similarity ceiling from recruiter decisions and feedback instead of fixing them by hand.",
+        "Strengthen the accounts with e-mail verification, password reset, stronger scrypt or Argon2id parameters and a shared "
+        "rate-limit store, and add organisations and roles so that a hiring team can share a shortlist.",
+        "Add audit logging, a data-retention policy for stored candidate records, and monitoring on a paid Render database plan."])
 
     # ------------------------------------------------------------ References / Appendix
     refs = [
@@ -658,6 +703,10 @@ def build_body() -> Doc:
         "W. McKinney, \"Data structures for statistical computing in Python,\" in Proc. 9th Python in Science Conf., 2010, pp. 51–56.",
         "Pallets Projects, \"Flask documentation.\" [Online]. Available: https://flask.palletsprojects.com/ (accessed 2026).",
         "Render, \"Blueprint specification (render.yaml).\" [Online]. Available: https://render.com/docs/blueprint-spec (accessed 2026).",
+        "OWASP Foundation, \"OWASP Application Security Verification Standard (ASVS), version 4.0.3,\" 2021. [Online]. Available: https://owasp.org/www-project-application-security-verification-standard/ (accessed 2026).",
+        "C. Percival and S. Josefsson, \"The scrypt password-based key derivation function,\" RFC 7914, Internet Engineering Task Force, Aug. 2016.",
+        "W3C, \"Content Security Policy Level 3,\" W3C Working Draft. [Online]. Available: https://www.w3.org/TR/CSP3/ (accessed 2026).",
+        "M. Bayer, \"SQLAlchemy documentation\" and \"Alembic documentation.\" [Online]. Available: https://docs.sqlalchemy.org/ and https://alembic.sqlalchemy.org/ (accessed 2026).",
     ]
     d.special("REFERENCES")
     d.raw('<div class="refs">' + "".join(f'<p class="hang">[{i}] {r}</p>' for i, r in enumerate(refs, 1)) + "</div>")
@@ -674,7 +723,7 @@ def build_body() -> Doc:
     d.raw('<h2>A.3 Self and Peer Assessment</h2>')
     d.toc.append((2, "A.3 Self and Peer Assessment", "A.3 Self and Peer Assessment"))
     d.table(["Team Member", "Self-Rated Contribution (%)", "Peer-Rated Contribution (%)", "Remarks"],
-            [[S1, "50%", "50%", "Built the extraction, NLP parsing, model training and scoring engine."],
-             [S2, "50%", "50%", "Built the web interface, tests, sample data and deployment package."]],
+            [[S1, "50%", "50%", "Built the extraction, NLP parsing, model training, scoring engine, data model and screening API."],
+             [S2, "50%", "50%", "Built the web interface, account and security layer, tests, sample data and deployment package."]],
             None, widths=[26, 22, 22, 30], center_cols=(1, 2))
     return d
