@@ -70,9 +70,9 @@ pre.code { font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace; font-s
 .hang { padding-left: 30pt; text-indent: -30pt; margin: 0; }
 .refs p { font-size: 10.5pt; line-height: 1.28; margin: 0 0 4.5pt !important; text-align: left; }
 .sig { display: flex; gap: 22pt; margin-top: 70pt; line-height: 1.3; text-align: left; } .sig > div { flex: 1; }
-.toc .row { display: flex; align-items: baseline; text-align: left; line-height: 1.38; }
+.toc .row { display: flex; align-items: baseline; text-align: left; line-height: 1.2; font-size: 11pt; }
 .toc .row .t { white-space: nowrap; } .toc .row .d { flex: 1; border-bottom: 1.4pt dotted #000; margin: 0 3pt; transform: translateY(-3pt); } .toc .row .n { min-width: 14pt; text-align: right; }
-.toc .l1 { font-weight: bold; margin-top: 2pt; } .toc .l2 { padding-left: 14pt; }
+.toc .l1 { font-weight: bold; margin-top: 3pt; } .toc .l2 { padding-left: 14pt; }
 .lof .row { display: flex; align-items: baseline; text-align: left; line-height: 1.55; } .lof .row .t { } .lof .row .d { flex: 1; border-bottom: 1.4pt dotted #000; margin: 0 3pt; transform: translateY(-3pt);} .lof .row .n { min-width: 14pt; text-align: right; }
 """
 
@@ -144,24 +144,26 @@ class Doc:
         self.raw(f'<figure style="margin:6pt 0 0">{cells}<div class="cap">{label} — {caption}</div></figure>')
 
     def table(self, headers: list[str], rows: list[list[str]], caption: str | None, widths: list[int] | None = None,
-              center_cols: tuple[int, ...] = ()):
+              center_cols: tuple[int, ...] = (), keep: bool = False):
         cg = "".join(f'<col style="width:{w}%">' for w in widths) if widths else ""
         head = "<thead><tr>" + "".join(f"<th>{h}</th>" for h in headers) + "</tr></thead>"
         body = "".join("<tr>" + "".join(
             f'<td class="{"c" if i in center_cols else ""}">{c}</td>' for i, c in enumerate(r)) + "</tr>" for r in rows)
-        self.raw(f"<table><colgroup>{cg}</colgroup>{head}<tbody>{body}</tbody></table>")
+        keep_css = ' style="break-inside:avoid"' if keep else ""
+        self.raw(f"<table{keep_css}><colgroup>{cg}</colgroup>{head}<tbody>{body}</tbody></table>")
         if caption:
             label = self._label("Table")
             self.tabs.append((label, caption))
             self.raw(f'<div class="cap">{label} — {caption}</div>')
 
     def code(self, text: str, caption: str | None = None, kind="Code"):
-        self.raw(f'<pre class="code">{html.escape(text)}</pre>')
+        block = f'<pre class="code">{html.escape(text)}</pre>'
         if caption:
             label = self._label(kind)
             if kind == "Figure":
                 self.figs.append((label, caption))
-            self.raw(f'<div class="cap">{label} — {caption}</div>')
+            block += f'<div class="cap">{label} — {caption}</div>'
+        self.raw(block)
 
     def html(self) -> str:
         return "".join(self.parts)

@@ -10,7 +10,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 TARGET = 29
-FIGS = ["fig_architecture", "fig_pipeline", "ui_home", "ui_screen_results", "fig_metrics", "fig_confusion", "fig_ranking", "fig_outcomes"]
+FIGS = ["ui_home", "ui_screen_form", "ui_screen_results", "ui_match_results", "ui_insights", "fig_architecture", "fig_pipeline", "fig_metrics", "fig_confusion", "fig_ranking", "fig_outcomes"]
 
 TRIAL = r'''
 import sys, json
@@ -38,10 +38,10 @@ def trial(tuning: dict):
 
 
 def main():
-    best = json.loads((HERE / "tuning.json").read_text()) if (HERE / "tuning.json").exists() else {"line_height": 1.7, "scales": {}}
+    best = json.loads((HERE / "tuning.json").read_text()) if (HERE / "tuning.json").exists() else {"line_height": 1.65, "scales": {}}
     bs, last, mx, _ = trial(best)
     print("start", round(bs), last, mx, flush=True)
-    for lh in (1.7,):
+    for lh in (1.6, 1.65, 1.7):
         t = dict(best, line_height=lh)
         s, l, m, _ = trial(t)
         print("lh", lh, round(s), l, m, flush=True)
@@ -49,7 +49,7 @@ def main():
             best, bs = t, s
     for sweep in range(1):
         for f in FIGS:
-            for k in (0.75, 0.9, 1.0, 1.1, 1.25):
+            for k in (0.6, 0.75, 0.9, 1.0, 1.1):
                 t = json.loads(json.dumps(best)); t["scales"][f] = k
                 s, l, m, _ = trial(t)
                 if s < bs - 1e-6:

@@ -1,11 +1,14 @@
 {
- "line_height": 1.7,
+ "line_height": 1.65,
  "scales": {
-  "fig_pipeline": 1.3,
-  "ui_screen_results": 0.9,
-  "fig_confusion": 1.25,
-  "fig_ranking": 1.3,
-  "fig_outcomes": 1.25,
-  "fig_metrics": 0.75
+  "ui_home": 1.0,
+  "ui_screen_form": 0.8,
+  "ui_screen_results": 0.8,
+  "ui_match_results": 0.8,
+  "ui_insights": 0.8,
+  "fig_metrics": 1.0,
+  "fig_confusion": 0.6,
+  "fig_ranking": 0.85,
+  "fig_pipeline": 1.15
  }
 }

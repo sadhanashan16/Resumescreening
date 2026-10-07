@@ -463,11 +463,10 @@ def build_body() -> Doc:
         "templates/ and static/: the user interface in HTML, CSS and JavaScript; dynamic content is built with textContent so that uploaded text can never inject markup, and a strict Content Security Policy is enforced.",
         "tests/: 34 pytest tests; samples/: 14 fictional sample resumes in PDF, DOCX, DOC and TXT formats; Dockerfile, render.yaml and .github/workflows/ci.yml for deployment and CI."])
     sec("5.2", "Key Code Snippets")
-    p("The text normalisation function removes personal identifiers and collapses skill spelling variants into one token each, "
-      "so that the TF-IDF vocabulary sees “sklearn” and “scikit-learn” as the same feature:")
+    p("The normalisation function removes personal identifiers and turns each skill spelling variant into one token, so “sklearn” "
+      "and “scikit-learn” become the same feature:")
     d.code(src(text_utils.normalize_for_model), "Name-blind text normalisation (text_utils.py)")
-    p("The training script defines the three components of the model; the SVM is wrapped in a sigmoid calibrator so that its "
-      "output can be averaged with the Naive Bayes probabilities:")
+    p("The training script defines the three model components; the SVM is wrapped in a sigmoid calibrator:")
     d.code(src(train_mod.make_vectorizer) + "\n\n" + src(train_mod.make_nb) + "\n\n" + src(train_mod.make_svm),
            "TF-IDF, Naive Bayes and calibrated SVM definitions (train.py)")
     p("Skill coverage gives full credit for a skill the resume lists and half credit for a related skill from the same family:")
@@ -480,18 +479,20 @@ def build_body() -> Doc:
     p("The home page explains the five-stage pipeline and links to the two tools. In recruiter mode (Screen candidates) the "
       "user pastes a job description or loads one of the twelve example descriptions, adds resumes by drag-and-drop (or ticks the "
       "built-in sample resumes for a quick demonstration) and chooses the shortlist size.")
-    d.figure_row([FIG / "ui_home.png", FIG / "ui_screen_form.png"], "Home Page (left) and Screen Candidates Page with a Job Description and Resumes (right)", 100)
+    d.figure(FIG / "ui_home.png", "Home Page of ResumeIQ", 74)
+    d.figure(FIG / "ui_screen_form.png", "Screen Candidates Page with a Job Description and Resumes", 74)
     p("The results page shows the job type detected from the description (with the classifier's confidence), the skills "
       "extracted from it and summary counts, followed by one card per candidate in rank order. Each card shows the score and "
       "grade, the predicted role, estimated experience and education, and the matched, related (partial credit) and missing "
       "skills; an expandable panel gives the per-component score bars and the separate Naive Bayes and SVM predictions. The "
       "shortlist and the full ranking can be downloaded as CSV, with spreadsheet formula characters neutralised.")
-    d.figure(FIG / "ui_screen_results.png", "Screening Results: Ranked Candidates with Skill Evidence", 54)
+    d.figure(FIG / "ui_screen_results.png", "Screening Results: Ranked Candidates with Skill Evidence", 74)
     p("In candidate mode (Find job match), a single resume, pasted text or a sample is analysed and the best-fit roles are "
       "listed with their scores, the skills already matched and the skills to learn. The Model insights page reports the "
       "dataset, the model comparison, the per-role results, the confusion matrix and the most predictive terms, and states "
       "prominently that the data are synthetic.")
-    d.figure_row([FIG / "ui_match_results.png", FIG / "ui_insights.png"], "Find Job Match: Role Recommendations (left) and the Model Insights Page (right)", 100)
+    d.figure(FIG / "ui_match_results.png", "Find Job Match: Role Recommendations for One Resume", 74)
+    d.figure(FIG / "ui_insights.png", "Model Insights Page", 74)
     p("Uploaded files are read into memory, scored and discarded; nothing is written to disk or stored. File type is validated "
       "by extension and content signature, size and count are limited, error responses never expose internals, and the "
       "browser is restricted by a Content Security Policy that blocks inline scripts and styles.")
@@ -507,7 +508,7 @@ def build_body() -> Doc:
              ["/api/match", "POST", "Recommend job roles for one resume (uploaded file, pasted text or a built-in sample)"],
              ["/api/roles, /api/samples, /api/model", "GET", "Example job descriptions, sample resume list and the stored training metrics"],
              ["/health", "GET", "Health check used by the hosting platform"]],
-            "Web Pages and JSON API Endpoints", widths=[34, 12, 54], center_cols=(1,))
+            "Web Pages and JSON API Endpoints", widths=[34, 12, 54], center_cols=(1,), keep=True)
     p("Deployment follows the standard container route for a machine-learning web service. The Dockerfile starts from a slim "
       "Python 3.12 image, installs antiword for legacy .doc files, installs the pinned requirements, and trains the model while "
       "the image is built, so the container starts immediately and the deployed model is exactly the one that was evaluated. "
@@ -519,7 +520,7 @@ def build_body() -> Doc:
              ["test_extractor.py", "9", "TXT, DOCX, PDF and legacy DOC extraction, and friendly errors for empty, corrupt, scanned or unsupported files"],
              ["test_engine.py", "6", "Metrics file consistency, five hand-written resumes, ranking order, name-blind scoring, re-weighting when a requirement is missing, role recommendations"],
              ["test_app.py", "7", "Page rendering and security headers, screening with uploads, validation of bad input, the 30-file limit, role matching and restricted sample downloads"]],
-            "Automated Test Suite (34 tests)", widths=[24, 9, 67], center_cols=(1,))
+            "Automated Test Suite (34 tests)", widths=[24, 9, 67], center_cols=(1,), keep=True)
     p("Besides the automated tests, each page was driven in a real browser (Chromium): a job description was loaded, resumes were "
       "uploaded, the CSV export was downloaded and the model-insights page was opened, with the browser console checked for "
       "script and Content-Security-Policy errors. The deployed configuration was also checked by installing only the pinned "
