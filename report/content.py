@@ -90,7 +90,7 @@ def bonafide() -> str:
 <p style="line-height:1.9">This is to certify that the Project–Based Learning report titled <b>“{TITLE}”</b> is a Bonafide record of work carried out by <b>{S1} [{R1}] , {S2} [{R2}]</b> of the Department of Computer Science and Engineering, Chennai Institute of Technology, as part of the continuous, mentor–guided Project-Based Learning (PBL) component of the Machine Learning course during the academic year [2026–2027] under my supervision.</p>
 <div class="sig" style="margin-top:92pt">
  <div><b>SIGNATURE</b><br>Dr. S. PAVITHRA, M.E., Ph.D.,<br><b>Professor and Head,</b><br>Dept. of Computer Science and Engineering<br>Chennai Institute of Technology,<br>Chennai – 69.</div>
- <div><b>SIGNATURE</b><br>Ms. SWATHI L,<br><b>MENTOR</b><br><b>Assistant Professor</b><br>Dept. of Computer Science and Engineering<br>Chennai Institute of Technology,<br>Chennai – 69.</div>
+ <div><b>SIGNATURE</b><br>Mrs. POORNIMA LAKSHMI,<br><b>MENTOR</b><br><b>Assistant Professor</b><br>Dept. of Computer Science and Engineering<br>Chennai Institute of Technology,<br>Chennai – 69.</div>
 </div>
 <p style="margin-top:96pt;text-align:left">Submitted for the final review held on …………………….</p>
 <div style="display:flex;justify-content:space-between;margin-top:60pt;font-weight:bold"><span>Internal Examiner</span><span style="margin-right:6pt">External Examiner</span></div>
@@ -118,7 +118,7 @@ def acknowledgement() -> str:
 <p>We are very proud to render our thanks to our Principal <b>Dr. A. RAMESH M.E., Ph.D.,</b> for the facilities and the encouragement given by him toward the progress and completion of our project.</p>
 <p>We would like to express special thanks and gratitude to our Dean <b>Dr. V. SRINIVASA RAO M.E., Ph.D.,</b> who has been a key source of motivation to us throughout the completion of our course and project work.</p>
 <p>We proudly render our immense gratitude to the Head of the Department <b>Dr. S. PAVITHRA M.E., Ph.D.,</b> for her effective leadership, encouragement and guidance throughout the project.</p>
-<p>We would like to extend our thanks to the Project Co-ordinator <b>Ms. SWATHI L,</b> Assistant Professor, Department of Computer Science and Engineering, for their valuable suggestions throughout this project.</p>
+<p>We would like to extend our thanks to the Project Co-ordinator <b>Mrs. POORNIMA LAKSHMI,</b> Assistant Professor, Department of Computer Science and Engineering, for their valuable suggestions throughout this project.</p>
 <p>We wish to acknowledge the help received from our class advisors <b>Dr. G. IRIN LORETTA M.E.,</b> Assistant Professor, and <b>S.E. NEELA KANDAN M.TECH.,</b> Assistant Professor, of the Department of Computer Science and Engineering for their valuable suggestions and support toward the successful completion of the project.</p>
 <p style="text-align:right;margin-top:62pt;margin-bottom:2pt;margin-right:10pt;font-size:12.5pt">{S1} ({R1})</p>
 <p style="text-align:right;margin-right:10pt;font-size:12.5pt">{S2} ({R2})</p>
